@@ -6,6 +6,10 @@
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License (GNU GPL)
  */
 
+
+// Forbid direct access
+// if(get_included_files()[0]==__FILE__){header("HTTP/1.1 403 Forbidden");die('<h1 style="font-family:arial;">Error 403: Forbidden</h1>');} 
+
 namespace orgelman\functions {
    
    class Functions {
@@ -778,5 +782,3 @@ namespace orgelman\functions {
       }
    }
 }
-// Forbid direct access
-if(get_included_files()[0]==__FILE__){header("HTTP/1.1 403 Forbidden");die('<h1 style="font-family:arial;">Error 403: Forbidden</h1>');} 
