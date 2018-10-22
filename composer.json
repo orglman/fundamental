@@ -20,11 +20,7 @@
         
     },
     "autoload": {
-        "psr-4": {
-            "Functions\\" : "src/",
-            
-            "" : "src/"
-        }
+        "classmap": ["src/"]
     },
     "license": "MIT"
 }
