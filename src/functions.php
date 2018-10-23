@@ -13,6 +13,7 @@
 namespace orgelman\functions {
    class Functions {
       protected $root = null;
+      protected $prefix = null;
 
       public function __construct($root="") {
          if($root!="") {
@@ -56,14 +57,23 @@ namespace orgelman\functions {
          return $this->root;
       }
       
+      // Set path prefix
+      public function setPrefix($path) {
+         $this->prefix = $path;
+         return $this->prefix;
+      }
+      public function getPrefix() {
+         return $this->prefix;
+      }
+      
       // Clean up path
       public function cleanPath($path) {
          $path = preg_replace('#/+#', '/', $path);
          $path = preg_replace('#\\+#', '\\', $path);
          
-         $path = str_replace(array('/','\\'), DIRECTORY_SEPARATOR, $path);
+         $path = str_replace(array('/','\\'), constant("DIRECTORY_SEPARATOR"), $path);
          
-         $path = rtrim($path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+         $path = rtrim($path, constant("DIRECTORY_SEPARATOR")).constant("DIRECTORY_SEPARATOR");
          
          return $path;
       }
@@ -119,7 +129,7 @@ namespace orgelman\functions {
                $querystring = $path;
             }
             
-            if(isset($parsed['query'])) {
+            if((isset($parsed['query'])) && ($parsed['query']!="")) {
                $querystring .= '?'.$parsed['query'];
             }
          } elseif(is_array($s)) {
@@ -159,7 +169,6 @@ namespace orgelman\functions {
          
          $q = "";
          if($querystring!="") { 
-            $q = "?";
             $arr = array();
             $values = array();
             
@@ -180,11 +189,12 @@ namespace orgelman\functions {
             foreach($arr as $str) {
                $vals = explode('=',$str,2);
                
-               $value = urlencode($vals[0]).'=';
+               $value = urlencode($vals[0]);
                if(isset($vals[1])) {
-                  $value .= urlencode($vals[1]);
+                  $value .= '='.urlencode($vals[1]);
                } else {
-                  $value .= 'true';
+                  $_GET[$value] = true;
+                  $value .= '='.'true';
                }
                $values[] = $value;
             }
@@ -195,7 +205,19 @@ namespace orgelman\functions {
          
          $url      = $protocol . '://' . $authentication . $host . $port . $path . $q . $fragment;
          
-         return $url;
+         return array(
+            "url" => $url,
+            "protocol" => $protocol,
+            "authentication" => $authentication,
+            "host" => $host,
+            "port" => $port,
+            "path" => $path,
+            "prefix" => $this->getPrefix(),
+            "alias" => strtolower(trim($path,$this->getPrefix())),
+            "query" => $q,
+            "fragment" => $fragment,
+            "get" => $_GET
+         );
       }
 
       public function botTrap($input,$subject="",$fa="",$style="",$nojs=false) {
