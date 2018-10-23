@@ -13,9 +13,9 @@
 namespace orgelman\functions {
    class Functions {
       protected $root = null;
-      protected $prefix = null;
+      protected $subcat = null;
 
-      public function __construct($root="") {
+      public function __construct($root = "", $start = null) {
          if($root!="") {
             $this->setRoot($root);
          } else {
@@ -57,13 +57,13 @@ namespace orgelman\functions {
          return $this->root;
       }
       
-      // Set path prefix
-      public function setPrefix($path) {
-         $this->prefix = $path;
-         return $this->prefix;
+      // Set path subcat
+      public function setSubcat($path) {
+         $this->subcat = $path;
+         return $this->subcat;
       }
-      public function getPrefix() {
-         return $this->prefix;
+      public function getSubcat() {
+         return $this->subcat;
       }
       
       // Clean up path
@@ -212,8 +212,8 @@ namespace orgelman\functions {
             "host" => $host,
             "port" => $port,
             "path" => $path,
-            "prefix" => $this->getPrefix(),
-            "alias" => strtolower(trim($path,$this->getPrefix())),
+            "subcat" => $this->getSubcat(),
+            "alias" => strtolower(trim($path,$this->getSubcat())),
             "query" => $q,
             "fragment" => $fragment,
             "get" => $_GET
