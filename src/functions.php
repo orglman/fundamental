@@ -6,386 +6,196 @@
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License (GNU GPL)
  */
 
-
 /** Forbid direct access
   * if(get_included_files()[0]==__FILE__){header("HTTP/1.1 403 Forbidden");die('<h1 style="font-family:arial;">Error 403: Forbidden</h1>');} 
   */
 
 namespace orgelman\functions {
-   
    class Functions {
-      private $version                 = "0.0.1";
-      private $update                  = "https://github.com/orgelman/fundamental/releases";
-
-      private $root                    = "";
-      private $path                    = "";
-
-      private $appDevice               = "";
-      private $appClient               = "";
-      private $removeGet               = array();
+      protected $root = null;
 
       public function __construct($root="") {
          if($root!="") {
-            $this->root = $root;
+            $this->setRoot($root);
+         } else {
+            $this->setRoot(__DIR__);
          }
-         $this->client = new stdClass;
-         $this->client->console = true;
-         if(php_sapi_name()!='cli') {
-            $this->client->console = false;
+         
+         // check whats executing the code
+         $this->client = new \stdClass;
+         $this->client->cli = false;
+         
+         // check if command line
+         if(php_sapi_name()=='cli') {
+            $this->client->cli = true;
+            $this->client->arguments = $this->parseArgv();
          }
       }
-      public function verify() {
-         if(md5_file(__FILE__) != @file_get_contents("https://server.orgelman.systems/orgelman/orgelman/md5.php")) {
-
-            if(!$this->client->console) {
-               $this->error("<strong>orgelman/orgelman Outdated</strong><br>Update: ".$this->update."<br><br>");
-            } else {
-               $this->error("orgelman/orgelman Outdated\nUpdate: ".$this->update);
-            }
+      
+      // Convert $argv to $_GET
+      public function parseArgv() {
+         if((isset($argv)) && ($argv!="")) {
+            parse_str(implode('&', array_slice($argv, 1)), $_GET);
+            array_push($_REQUIRE, $_GET);
+            return $_GET;
+         } else {
             return false;
          }
-         return true;
       }
 
-      private function error($message, $level=E_USER_NOTICE) { 
-         $caller = debug_backtrace()[0];
+      // Set path to root
+      public function setRoot($path) {
+         $path = $this->cleanPath($path);
+         if(is_dir($path)) {
+            $this->root = $path;
+            return $this->root;
+         }
+         return false;
+      }
+      public function getRoot() {
+         return $this->root;
+      }
+      
+      // Clean up path
+      public function cleanPath($path) {
+         $path = preg_replace('#/+#', '/', $path);
+         $path = preg_replace('#\\+#', '\\', $path);
+         
+         $path = str_replace(array('/','\\'), DIRECTORY_SEPARATOR, $path);
+         
+         $path = rtrim($path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+         
+         return $path;
+      }
 
-         if(!$this->client->console) {
-            trigger_error($message.' in <strong>'.$caller['function'].'</strong> called from <strong>'.$caller['file'].'</strong> on line <strong>'.$caller['line'].'</strong><br>'."\n", $level);
-         } else {
-            trigger_error(strip_tags($message.' in '.$caller['function'].' called from '.$caller['file'].' on line '.$caller['line'], $level));
+      // Clean up URL
+      public function fixURL($s = null, $f = null, $a = null, $use_forwarded_host = false ) {
+         //scheme://username:password@domain:port/path?query_string#fragment_id
+         $querystring = null;
+         $urlstring = null;
+         if((!is_string($s)) && ($this->client->cli)) {
+            return false;
+         }
+         if((($s==null) || (is_array($s) || is_object($s))) && (isset($_SERVER))) {
+            $s = $_SERVER;
+         } elseif(is_string($s)) {
+            $urlstring = $s;
          } 
-      }
-
-      public function setRoot($root) {
-         $this->root                   = $root;
-      }
-      public function setPath($path) {
-         $this->path                   = $path;
-      }
-
-      public function removeGet($get) {
-         $this->removeGet[] = $get;
-      }
-      public function get_domain($root="",$path="",$lang="",$domain="") {
-         $this->server                 = new stdClass();
-         $this->server->root           = "";
-         $this->server->domain         = "";
-         $this->server->full           = "";
-
-         $this->server->protocol       = "";
-         $this->server->port           = "";
-         $this->server->IP             = "";
-         $this->server->server         = "";
-         $this->server->URI            = "";
-         $this->server->dir            = "";
-         $this->server->subDomain      = array();
-         $this->server->subFolder      = array();
-         $this->server->get            = array();
-         $this->server->post           = array();
-
-         $afterQustion = "";
-         if($lang!="") {
-            $lang = trim($lang,"/")."/";
+         
+         $authentication = "";
+         if((is_array($a)) && ((isset($a["user"])) && (isset($a["pass"])))) {
+            $authentication  .= $a["user"].':'.$a["pass"].'@';
          }
-         $this->server->language    = ltrim($lang,"/");
-
-         if($root=="") {
-            if($this->root!="") {
-               $root = $this->root.DIRECTORY_SEPARATOR;
-            } else {
-               $root = __DIR__.DIRECTORY_SEPARATOR;
+         
+         $fragment = "";
+         if((is_string($f)) && ($f!="")) {
+            $fragment = '#'.$f;
+         }
+    
+         if($urlstring!=null) {
+            $parsed  = parse_url($urlstring);
+            $sp      = "http";
+            if(isset($parsed['scheme'])) {
+               $sp   = strtolower( $parsed['scheme'] );
             }
-         } else {
-            $root = $root.DIRECTORY_SEPARATOR;
-         }
-         $root = str_replace(array("\\","/"),DIRECTORY_SEPARATOR,$root);
-         if($path=="") {
-            if($this->path!="") {
-               $path = $this->path;
-            } else {
-               if($this->server->dir!="") {
-                  $path = $this->server->dir."/";
-               }
+            
+            $ssl     = ( ( strtolower($sp) == "https" ) ? true : false );
+            $protocol= $sp;
+            
+            $port = "";
+            if(isset($parsed['port'])) {
+               $port = $parsed['port'];
+               $port = ( ( ! $ssl && $port=='80' ) || ( $ssl && $port=='443' ) ) ? '' : ':'.$port;
             }
-         } else {
-            $path = $path."/";
+            if(isset($parsed['host'])) {
+               $host = $parsed['host'];
+            }
+            
+            $querystring = '';
+            $path = "/";
+            if(isset($parsed['path'])) {
+               $path = $parsed['path'];
+               
+               $querystring = $path;
+            }
+            
+            if(isset($parsed['query'])) {
+               $querystring .= '?'.$parsed['query'];
+            }
+         } elseif(is_array($s)) {
+            $ssl = 0;
+            if(isset($s['HTTPS'])) {
+               $ssl      = ( ! empty( $s['HTTPS'] ) && $s['HTTPS'] == 'on' );
+            }
+            
+            $sp = "http";
+            if(isset($s['SERVER_PROTOCOL'])) {
+               $sp       = strtolower( $s['SERVER_PROTOCOL'] );
+            }
+            $protocol = "http";
+            
+            $protocol = substr( $sp, 0, strpos( $sp, '/' ) ) . ( ( $ssl ) ? 's' : '' );
+            
+            if(isset($s['SERVER_PORT'])) {
+               $port     = $s['SERVER_PORT'];
+               $port     = ( ( ! $ssl && $port=='80' ) || ( $ssl && $port=='443' ) || ( $ssl && $port=='80' ) ) ? '' : ':'.$port;
+            }
+            
+            if((isset($s['HTTP_X_FORWARDED_HOST'])) && (isset($s['HTTP_HOST']))) {
+               $host     = ( $use_forwarded_host && isset( $s['HTTP_X_FORWARDED_HOST'] ) ) ? $s['HTTP_X_FORWARDED_HOST'] : ( isset( $s['HTTP_HOST'] ) ? $s['HTTP_HOST'] : null );
+            }
+            
+            if(isset($s['SERVER_NAME'])) {
+               $host     = isset( $host ) ? $host : $s['SERVER_NAME'];
+            }
+            
+            if(isset($s['REQUEST_URI'])) {
+               $querystring = $s['REQUEST_URI'];
+            }
          }
-         $path = trim($path,"/")."/";
-
-         $this->server->root = trim(str_replace(array("/","\\"),DIRECTORY_SEPARATOR,DIRECTORY_SEPARATOR.trim($root,"/").DIRECTORY_SEPARATOR));
-         if(!file_exists($this->server->root)) {
-            $this->error("No root directory found",  E_USER_ERROR);
+         if(!isset($host)) {
+            return false;
          }
-
+         
          $q = "";
-         if((isset($_SERVER['SERVER_PROTOCOL'])) && (isset($_SERVER['SERVER_PORT'])) && (isset($_SERVER['SERVER_NAME']))) {
-            $ssl                       = ( ! empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on' );
-            $sp                        = strtolower( $_SERVER['SERVER_PROTOCOL'] );
-            $this->server->protocol    = substr( $sp, 0, strpos( $sp, '/' ) ) . ( ( $ssl ) ? 's' : '' );
-            $this->server->port        = $_SERVER['SERVER_PORT'];
-            $port                      = ( ( ! $ssl && $_SERVER['SERVER_PORT']=='80' ) || ( $ssl && $_SERVER['SERVER_PORT']=='443' ) || ($_SERVER['SERVER_PORT']=='80') ) ? '' : ':'.$_SERVER['SERVER_PORT'];
-            if($path!="") {
-               $this->server->dir      = trim(str_replace($_SERVER["DOCUMENT_ROOT"],"",dirname(debug_backtrace()[0]["file"])),"/");
-            } else {
-               $this->server->dir      = $path;
-            }
-
-            foreach(explode("/",$this->server->dir) as $dir) {
-               $this->server->subFolder[] = $dir;
-            }
-
-            $domain                    = explode(":",preg_replace("/^www\.(.+\.)/i", "$1", $_SERVER["HTTP_HOST"]),2);
-            $server                    = parse_url($domain[0]);
-
-            if(isset($server['host'])) {
-               $host                   = strtolower($server['host']);
-            } else if(isset($server['path'])) {
-               $host                   = strtolower($server['path']);
-            } else {
-               $host                   = strtolower($_SERVER["HTTP_HOST"]);
-            }
-            $host_names                = explode(".", $host);
-
-            if(filter_var($_SERVER["SERVER_NAME"], FILTER_VALIDATE_IP) == true) {
-               $this->server->IP       = $_SERVER['SERVER_NAME'];
-            } else {
-               $this->server->IP       = gethostbyname($_SERVER['SERVER_NAME']);
-               $this->server->server   = $host_names[count($host_names)-2] . "." . $host_names[count($host_names)-1];
-               unset($host_names[count($host_names)-1]);
-               unset($host_names[count($host_names)-1]);
-               $arr = array();
-
-               foreach($host_names as $host){
-                  $arr[] = $host;
-               }
-               if(!empty($arr)) {
-                  foreach($arr as $subdom) {
-                     $this->server->subDomain[] = $subdom;
-                  }
-               }
-            }
-            if((isset($this->server->subDomain[0])) && (isset($this->server->subFolder[0]))) {
-               if($this->server->subDomain[0] == $this->server->subFolder[0]) {
-                  unset($this->server->subFolder[0]);
-               }
-            }
-
-            $this->server->URI         = ltrim($_SERVER["REQUEST_URI"],"/");
-
-            if (substr($this->server->URI, 0, strlen($this->server->dir)) == $this->server->dir) {
-               $this->server->URI      = ltrim(substr(trim(trim($_SERVER["REQUEST_URI"],"/")), strlen(trim(trim($this->server->dir,"/")))),"/");
-            } 
-            $domain                    = $this->server->protocol."://";
-            foreach($this->server->subDomain as $dom) {
-               $domain                .= $dom.".";
-            }
-            if($this->server->server=="") {
-               $domain                .= $this->server->IP.$port."/";
-            } else {
-               $domain                .= $this->server->server.$port."/";
-            }
-            $this->server->domain      = $domain;
-
-            if($path!="") {
-               $this->server->dir         = $path;
-            } else {
-               $this->server->dir         = "";
-               foreach($this->server->subFolder as $dom) {
-                  $this->server->dir     .= $dom."/";
-               }
-            } 
-
-            if(isset($_SERVER["REQUEST_URI"])) {
-               if (substr(trim($_SERVER["REQUEST_URI"],"/"), 0, strlen($this->server->dir)) == trim($this->server->dir,"/")) {
-                  $_SERVER["REQUEST_URI"]      = ltrim(substr(trim(trim($_SERVER["REQUEST_URI"],"/")), strlen(trim(trim($this->server->dir,"/")))),"/");
-               } 
-               if(strpos($_SERVER["REQUEST_URI"], '?') !== false) {
-                  $qust  = substr($_SERVER["REQUEST_URI"], strpos($_SERVER["REQUEST_URI"], "?") + 1);
-                  $quest = explode("?",$qust);
-                  $qust  = implode ("&",$quest);
-                  $afterQustion = $qust;
-                  $qust  = explode("&",$qust);
-
-                  foreach($qust as $get) {
-                     $gets = explode("=",$get);
-                     $key  = $gets[0];
-                     $get  = true;
-                     if(isset($gets[1])) {
-                        $get  = $gets[1];
-                     }
-                     $new  = explode("?",$get);
-                     if(count($new)>1) {
-                        foreach($new as $nget) {
-                           if (strpos($nget, '=') !== false) {
-                              $nkey = explode("=",$nget);
-                              $this->server->get[$nkey[0]] = $nkey[1];
-                              $_GET[$nkey[0]] = $nkey[1];
-                           } else {
-                              $nget = true;
-                              $this->server->get[$key] = $nget;
-                              $_GET[$key] = $nget;
-                           }
-                        }
-                     } else {
-                        if($get=="") {
-                           $get = true;
-                        }
-                        $this->server->get[$key] = $get;
-                        $_GET[$key] = $get;
-                     }
-                  }
-               }
-
-               if(!empty($_GET)) {
-                  foreach($this->removeGet as $remo) {
-                     if(isset($_GET[$remo])) {
-                        unset($_GET[$remo]);
-                     }
-                     if(isset($this->server->get[$remo])) {
-                        unset($this->server->get[$remo]);
-                     }
-                  }
-                  foreach($_GET as $key => $get) {
-                     if(isset($this->server->get[$key])) { 
-                     } else {
-                        $this->server->get[$key] = $get;
-                     }
-                  }
-               }
-               if(!empty($_POST)) {
-                  foreach($_POST as $key => $post) {
-                     if(isset($this->server->post[$key])) { 
-                     } else {
-                        $this->server->post[$key] = $post;
-                     }
-                  }
-               }
-            }
-         }
-         $this->server->vars        = $afterQustion;
-         if(isset($_SERVER["REQUEST_URI"])) {
-            $this->server->URI         = ltrim($_SERVER["REQUEST_URI"],"/");
-         }
-
-
-         $uri = $this->server->URI;
-         if(trim(trim($this->server->dir,"/")) !="") {
-            if(substr($this->server->URI, 0, strlen($this->server->dir)) === $this->server->dir) {
-               $uri = substr($this->server->URI, strlen($this->server->dir));
-            }
-         }
-         $this->server->URI = $uri;
-         $this->server->languageStr = "";
-         if($this->server->language!="") {
-            $ex = explode("/",$this->server->URI);
-            if(strlen($ex[0]) == 2) {
-               $this->server->languageStr = $ex[0];
-            }
-            if(substr($this->server->URI, 0, strlen($this->server->language)) === $this->server->language) {
-               $this->server->URI      = ltrim(substr(trim(trim($_SERVER["REQUEST_URI"],"/")), strlen(trim(trim($this->server->dir.$this->server->language,"/")))),"/");
-            }
-         } else {
-            $ex = explode("/",$this->server->URI);
-            if(strlen($ex[0]) == 2) {
-               $this->server->languageStr = $ex[0];
-               unset($ex[0]);
-            }
-            $exp = implode("/",$ex);
-            $this->server->URI = $exp;
-         }
-
-         if(strpos($this->server->URI, '?') !== false) {
-            $this->server->URI = substr($this->server->URI, 0, strpos($this->server->URI, "?"));
-         }
-
-         if(strtolower(trim($this->server->URI,"/")) == strtolower(trim($this->server->language,"/"))) {
-            $this->server->URI = "";
-         }
-         if($this->server->vars!="") {
-            $newvar = array();
-            foreach(explode("&",$this->server->vars) as $vars) {
-               $exp = explode("=",$vars);
-               foreach($this->removeGet as $remo) {
-                  if($exp[0]!=$remo) {
-                     $newvar[] = $vars;
-                  }
-               }
-            }
-            $newvars = implode("&",$newvar);
-            if($newvars!="") {
-               $this->server->vars = "?".$newvars;
-            } else {
-               $this->server->vars = "";
-            }
-         }
-
-         $this->root                   = $this->server->root;
-         $this->path                   = $this->server->dir;
-
-         $this->server->URI            = $this->server->URI.$this->server->vars;
-         $this->server->domain         = trim($this->server->domain.$this->server->dir,"/")."/";
-         $this->server->full           = $this->server->domain.$this->server->language.$this->server->URI;
-
-         if((trim($this->server->domain,"/") == "") && ($domain!="")) {
-            $this->server->domain = trim($domain,"/")."/";
-         }
-
-         return $this->server;
-      }
-      public function get_domain_remove_get($arr=array()) {
-         foreach($arr as $str) {
-            if(isset($this->server->get[$str])) {
-               unset($this->server->get[$str]);
-            }
-         }
-         $this->set_domain_uri();
-         return true;
-      }
-      public function set_domain_uri() {
-         $q = "";
-         if(!empty($this->server->get)) { 
+         if($querystring!="") { 
             $q = "?";
-            $i=0;
-            foreach($this->server->get as $key => $get) {
-               if($get=="") {
-                  $get = true;
+            $arr = array();
+            $values = array();
+            
+            $r = explode("?",$querystring,2);
+            if(!substr($querystring, 0, 1) !== '?') {
+               $path = $r[0];
+               unset($r[0]);
+            } 
+            if(!empty($r)) {
+               foreach(explode("?",$r[1]) as $str) {
+                  foreach(explode("&",$str) as $s) {
+                     $arr[] = $s;
+                  }
                }
-               if($i!=0) {
-                  $q .= "&";
+            }
+            
+            sort($arr);
+            foreach($arr as $str) {
+               $vals = explode('=',$str,2);
+               
+               $value = urlencode($vals[0]).'=';
+               if(isset($vals[1])) {
+                  $value .= urlencode($vals[1]);
+               } else {
+                  $value .= 'true';
                }
-               $q .= $key."=".$get;
-               $i++;
+               $values[] = $value;
+            }
+            if(!empty($values)) {
+               $q = '?'.implode('&',$values);
             }
          }
-
-         $uri = $this->server->URI;
-         if(trim(trim($this->server->dir,"/")) !="") {
-            if(substr($this->server->URI, 0, strlen($this->server->dir)) === $this->server->dir) {
-               $uri = substr($this->server->URI, strlen($this->server->dir));
-            }
-         }
-         if(strpos($this->server->URI, '?') !== false) {
-            $uri = substr($uri, 0, strpos($uri, "?"));
-         }
-         $this->server->URI            = $uri;
-         $this->server->full           = $this->server->domain.$this->server->URI;
-
-         return $q;
-      }
-
-      public function isBot($ua="") {
-         $ret = false;
-         if($ua=="") {
-            $ua = $this->get_client_ua();
-         }
-         foreach (json_decode(file_get_contents(dirname(__FILE__).'/../lib/bots.json')) as $num => $bot) {
-            if(strpos(preg_replace("/[^A-Za-z0-9?!]/",'',strtolower($ua)), preg_replace("/[^A-Za-z0-9?!]/",'',strtolower(($bot->pattern)))) !== FALSE) {
-               $ret = "#".$num.": ".$bot->pattern;
-            }
-         }
-
-         return $ret;
+         
+         $url      = $protocol . '://' . $authentication . $host . $port . $path . $q . $fragment;
+         
+         return $url;
       }
 
       public function botTrap($input,$subject="",$fa="",$style="",$nojs=false) {
@@ -478,77 +288,6 @@ namespace orgelman\functions {
          return $str;
       }
 
-      public function isApp() {
-         $ua      = explode(" ",$_SERVER["HTTP_USER_AGENT"],2);
-         $version = explode("/",$ua[0]);
-
-         $app = 1;
-         if(isset($version[0])) {
-            if($version[0] != "OrgelmanSystems") {
-               $app = 0;
-            }
-         } else {
-            $app = 0;
-         }
-
-         if(isset($ua[1])) {
-            $arc = str_replace(array("(",")"),"",$ua[1]);
-            $arclight = explode(" ",$arc);
-            if($arclight[0] != "ArcLight") {
-               $app = 0;
-            } else {
-               $dev = explode(":",$arclight[2]);
-               $app = $dev[0];
-               $device = $dev[1];
-
-               $this->appClient = $app;
-               $this->appDevice = $device;
-
-               $this->get_client();
-               $this->browser->setPlatform($app);
-            }
-         } else {
-            $app = 0;
-         }
-
-         return $app;
-      }
-      public function get_app_id() {
-         $this->isApp();
-
-         return $this->appDevice;
-      }
-
-      public function setCron($cronPath) {
-         $response   = @file_get_contents("https://cron.orgelman.systems/setCall.php", false, $this->CronOptions($cronPath) );
-         return true;
-      }
-      private function CronOptions($path = "") {
-         if(isset($this->server)) {
-
-         } else {
-            $this->getDomain();
-         }
-         $postdata = http_build_query(
-            array(
-               'data'   => array('path'=>$path)
-            )
-         );
-         $options = array(
-            'http'=>array(
-                  "method"=>
-                     "POST",
-                  "header"=>
-                     "Accept-language: en\r\n" .
-                     "Referer: ".$this->server->full."\r\n" . 
-                     "User-Agent: orgelman/functions (".$this->version.")\r\n" .
-                     "Content-type: application/x-www-form-urlencoded\r\n",
-                  "content"=> 
-                     $postdata,
-            )
-         );
-         return @stream_context_create($options);
-      }
 
       // Get client browser info
       // https://github.com/cbschuld/Browser.php/tree/master/lib
@@ -698,21 +437,6 @@ namespace orgelman\functions {
          }
       } 
 
-      // Print array to string
-      public function array2str($array) {
-         $str="";
-         foreach($array as $k=>$i){
-            if(is_array($i)){
-               $str.=addslashes("<b>[".$k."]</b> => (".array2str($i).")<br> ");
-            } else {
-               if($i!=""){
-                  $str.=addslashes("[".$k."] => (".$i."), ");
-               }
-            }
-         }
-         return $str;
-      }
-
       // Invers RBG
       public function color_inverse($color){
          $color = str_replace('#', '', $color);
@@ -750,36 +474,6 @@ namespace orgelman\functions {
          }
 
          return $return;
-      }
-
-      // Zip directory
-      public function Zip($source, $destination) {
-         if (!extension_loaded('zip') || !file_exists($source)) {
-            return false;
-         }
-
-         $zip = new ZipArchive();
-         if (!$zip->open($destination, ZIPARCHIVE::CREATE)) {
-            return false;
-         }
-
-         $source = str_replace('\\', '/', realpath($source));
-
-         if (is_dir($source) === true) {
-            $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($source), RecursiveIteratorIterator::SELF_FIRST);
-
-            foreach ($files as $file) {
-               $file = str_replace('\\', '/', realpath($file));
-               if(is_dir($file) === true) {
-                  $zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
-               } elseif(is_file($file) === true) {
-                  $zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
-               }
-            }
-         } elseif(is_file($source) === true) {
-            $zip->addFromString(basename($source), file_get_contents($source));
-         }
-         return $zip->close();
       }
    }
 }
