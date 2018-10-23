@@ -207,6 +207,7 @@ namespace orgelman\functions {
          
          return array(
             "url" => $url,
+            "root" => $this->getRoot(),
             "protocol" => $protocol,
             "authentication" => $authentication,
             "host" => $host,
