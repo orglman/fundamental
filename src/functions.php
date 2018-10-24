@@ -14,8 +14,10 @@ namespace orgelman\functions {
    class Functions {
       protected $root = null;
       protected $subcat = null;
+      protected $scriptStart = null;
 
       public function __construct($root = "", $start = null) {
+         $this->scriptStart = $start;
          if($root!="") {
             $this->setRoot($root);
          } else {
@@ -32,7 +34,13 @@ namespace orgelman\functions {
             $this->client->arguments = $this->parseArgv();
          }
       }
-      
+      public function timeElapsed($microtime = null) {
+         if($microtime == null) {
+            $microtime = $this->scriptStart;
+         }
+         return microtime(true) - $microtime.'s';
+      }
+
       // Convert $argv to $_GET
       public function parseArgv() {
          if((isset($argv)) && ($argv!="")) {
@@ -79,7 +87,7 @@ namespace orgelman\functions {
       }
 
       // Clean up URL
-      public function fixURL($s = null, $f = null, $a = null, $use_forwarded_host = false ) {
+      public function getURL($s = null, $f = null, $a = null, $use_forwarded_host = false ) {
          //scheme://username:password@domain:port/path?query_string#fragment_id
          $querystring = null;
          $urlstring = null;
