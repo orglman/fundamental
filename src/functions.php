@@ -14,14 +14,19 @@ namespace orgelman\functions {
    class Functions {
       protected $root = null;
       protected $subcat = null;
+      protected $config = null;
       protected $scriptStart = null;
 
-      public function __construct($root = "", $start = null) {
+      public function __construct($root = null, $start = null, $config = null) {
          $this->scriptStart = $start;
-         if($root!="") {
+         if($root != null) {
             $this->setRoot($root);
          } else {
             $this->setRoot(__DIR__);
+         }
+         
+         if($config != null) {
+            $this->setConfig($config);
          }
          
          // check whats executing the code
@@ -50,6 +55,19 @@ namespace orgelman\functions {
          } else {
             return false;
          }
+      }
+
+      // Set config object
+      public function setConfig($config) {
+         if(is_object($config)) {
+            return $this->config = $config;
+         }
+         return false;
+      }
+      
+      // Get config object
+      public function getConfig() {
+         return $this->config;
       }
 
       // Set path to root
