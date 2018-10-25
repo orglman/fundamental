@@ -17,7 +17,7 @@
         
     },
     "suggest": {
-        "PHPSQLParser\PHPSQLParser" : "@dev"
+        "PHPSQLParser/PHPSQLParser" : "@dev"
     },
     "autoload": {
         "classmap": ["src/"]
