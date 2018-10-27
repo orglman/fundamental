@@ -1,7 +1,7 @@
 {
     "name": "orglman/fundamental",
     "type": "library",
-    "description": "... ny",
+    "description": "A code library with fundamental functions",
     "authors": [
         {
             "name": "Tobias Jonson",
