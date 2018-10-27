@@ -11,13 +11,14 @@
     "require": {
         "php": ">=5.5.0",
         "ext-ctype": "*",
-        "ext-filter": "*"
+        "ext-filter": "*",
+        "greenlion/PHP-SQL-Parser" : "dev-master"
     },
     "require-dev": {
         
     },
     "suggest": {
-        "PHPSQLParser/PHPSQLParser" : "@dev"
+        
     },
     "autoload": {
         "classmap": ["src/"]
