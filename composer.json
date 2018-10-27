@@ -10,7 +10,7 @@
     ],
     "require": {
         "php" : ">=5.5.0",
-        "greenlion/PHP-SQL-Parser" : "dev-master"
+        "greenlion/PHP-SQL-Parser" : "^4.1.2"
     },
     "require-dev": {
         
