@@ -240,7 +240,7 @@ namespace orgelman\functions {
             "port" => $port,
             "path" => $path,
             "subcat" => $this->getSubcat(),
-            "alias" => strtolower(trim($path,$this->getSubcat())),
+            "alias" => trim($path,$this->getSubcat()),
             "query" => $q,
             "fragment" => $fragment,
             "get" => $_GET
