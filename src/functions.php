@@ -7,6 +7,7 @@
  */
 
 /** Forbid direct access
+  * Put first in script
   * if(get_included_files()[0]==__FILE__){header("HTTP/1.1 403 Forbidden");die('<h1 style="font-family:arial;">Error 403: Forbidden</h1>');} 
   */
 
