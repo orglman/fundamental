@@ -17,9 +17,11 @@
     "suggest": {
         
     },
-    "include-path"   : ["src/traits/"],
     "autoload": {
-        "classmap"   : ["src/"]
+        "classmap"   : ["src/", "src/traits/"]
+    },
+    "config": {
+        "use-include-path": true
     },
     "license"        : "MIT"
 }
