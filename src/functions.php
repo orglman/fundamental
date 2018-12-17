@@ -524,19 +524,6 @@ namespace orgelman\functions {
 
          return $return;
       }
-      function startsWith($haystack, $needle) {
-        $length = strlen($needle);
-        return (substr($haystack, 0, $length) === $needle);
-      }
-      function endsWith($haystack, $needle) {
-        $length = strlen($needle);
-        if ($length == 0) {
-            return true;
-        }
-
-        return (substr($haystack, -$length) === $needle);
-      }
-     
       public function luhnCreate($s) {
         // Add a zero check digit
         $s = $s . '0';
