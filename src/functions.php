@@ -6,25 +6,25 @@
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License (GNU GPL)
  */
 
-/** Forbid direct access
-  * Put first in script
-  * if(get_included_files()[0]==__FILE__){header("HTTP/1.1 403 Forbidden");die('<h1 style="font-family:arial;">Error 403: Forbidden</h1>');} 
-  */
-
 namespace orgelman\functions {
    class Functions {
+      use orgelman\functions\traits\randomString;
+      
       protected $root = null;
       protected $subcat = null;
       protected $config = null;
       protected $scriptStart = null;
 
       public function __construct($root = null, $start = null, $config = null) {
-         $this->scriptStart = $start;
          if($root != null) {
             $this->setRoot($root);
          } else {
             $this->setRoot(__DIR__);
          }
+         if($start == null) {
+            $start = microtime(true);
+         }
+         $this->scriptStart = $start;
          
          if($config != null) {
             $this->setConfig($config);
@@ -342,7 +342,6 @@ namespace orgelman\functions {
       // Get client browser info
       // https://github.com/cbschuld/Browser.php/tree/master/lib
       public function get_client() {
-         require_once("class.browser.php");
          $this->browser = new Browser();
 
          $this->client->browser = $this->browser->getBrowser();
@@ -568,16 +567,5 @@ namespace orgelman\functions {
         }
         return (0 == ($sum % 10));
       } 
-    
-      function generateRandomString($length = 10) {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-          $randomString .= $characters[rand(0, $charactersLength - 1)];
-        }
-      
-        return $randomString;
-      }
    }
 }
