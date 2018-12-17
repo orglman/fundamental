@@ -7,10 +7,13 @@
  */
 namespace orgelman\security {
    class encrypt {
-      use \orgelman\functions\traits\randomString;
+      use \orgelman\functions\traits\stringRandom;
+      use \orgelman\functions\traits\stringSearch;
       
       private $cipher_algorithm = '';
       private $cipher_method = 'AES-256-CBC';
+      
+      private $delimiter_characters = '==00==';
       
       private $compress = false;
       
@@ -19,6 +22,7 @@ namespace orgelman\security {
             trigger_error('Hashing algorithm invalid', E_USER_ERROR); 
             exit();
          }
+         $this->delimiter_characters = $this->textToBinary($this->delimiter_characters);
          
          $this->cipher_algorithm = $cipher_algorithm;
       }
@@ -34,31 +38,6 @@ namespace orgelman\security {
       }
       
       
-      public function textToBinary($str) {
-         $bin = array();
-         for($i=0; strlen($str)>$i; $i++) {
-            if(function_exists('mb_ord')) {
-               $bin[] = str_pad(decbin(mb_ord($str[$i])), 8, '0', STR_PAD_LEFT);
-            } else {
-               $bin[] = str_pad(decbin(ord($str[$i])), 8, '0', STR_PAD_LEFT);
-            }
-         }
-         return implode(' ',$bin);
-      }
-      public function binaryToText($str) {
-         $bin = explode(' ', $str);
-         
-         $text = array();
-         for($i=0; count($bin)>$i; $i++) {
-            if(function_exists('mb_chr')) {
-               $text[] = mb_chr(bindec(ltrim($bin[$i],'0')));
-            } else {
-               $text[] = chr(bindec(ltrim($bin[$i],'0')));
-            }
-         }
-      
-         return implode($text);
-      }
       public function encrypt($str, $key, $method = '') {
          if($method == '') {
             $method = $this->cipher_method;
@@ -98,11 +77,19 @@ namespace orgelman\security {
             $return['encrypted'] = gzcompress($return['encrypted'],9);
          }
          
+         $return['encrypted'] = $this->delimiter_characters.' '.$return['encrypted'].' '.$this->delimiter_characters;
+         
          return $return;
       }
       public function decrypt($str, $key, $method = '') {
          if($method == '') {
             $method = $this->cipher_method;
+         }
+         
+         if((!$this->startsWith($str, $this->delimiter_characters)) || (!$this->endsWith($str, $this->delimiter_characters))) {
+            return array('encrypted' => trim($str))
+         } else {
+            $str = trim(trim(trim($str),$this->delimiter_characters));
          }
 
          $return = array('decrypted' => '', 'encrypted' => trim($str), 'key' => $key, 'safekey' => '', 'algorithm' => $this->cipher_algorithm, 'method' => $method, 'iv' => '', 'base64_encode' => array(), 'error' => array());
