@@ -9,6 +9,7 @@ namespace orgelman\security {
    class encrypt {
       use \orgelman\functions\traits\stringRandom;
       use \orgelman\functions\traits\stringSearch;
+      use \orgelman\functions\traits\stringConvert;
       
       private $cipher_algorithm = '';
       private $cipher_method = 'AES-256-CBC';
@@ -87,7 +88,7 @@ namespace orgelman\security {
          }
          
          if((!$this->startsWith($str, $this->delimiter_characters)) || (!$this->endsWith($str, $this->delimiter_characters))) {
-            return array('encrypted' => trim($str))
+            return array('encrypted' => trim($str));
          } else {
             $str = trim(trim(trim($str),$this->delimiter_characters));
          }
