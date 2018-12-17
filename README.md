@@ -34,7 +34,7 @@ $str              = 'message';
 $encrypt          = new orgelman\security\encrypt('sha256');
 $encrypted        = $encrypt->encrypt($str, $key, $method = '')['encrypted'];
 
-$decrypted        = $encrypt->decrypt($encrypted, $key, $method = '');
+$decrypted        = $encrypt->decrypt($encrypted, $key, $method = '')['decrypted'];
 ```
 ### Hashing and validating passwords
 ```
