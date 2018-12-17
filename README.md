@@ -4,20 +4,43 @@
 
 ## Code Examples
 
+### Forbid direct access
+```
+if(get_included_files()[0]==__FILE__){header("HTTP/1.1 403 Forbidden");die('<h1 style="font-family:arial;">Error 403: Forbidden</h1>');} 
+```
+### Getting script elapsed time 
+```
+$functions        = new orgelman\functions\Functions($root = null, $start = microtime(true));
+echo $functions->timeElapsed();
+```
+### Hide emails
+```
+$functions        = new orgelman\functions\Functions();
+echo $functions->obfuscate_email('test@example.com');
+echo $functions->botTrap('test@example.com');
+```
+
+### Get user agent, IP and client info 
+```
+$functions        = new orgelman\functions\Functions();
+print_r($functions->get_client());
+echo $functions->get_client_ua();
+echo $functions->get_client_ip();
+```
 
 ### Encrypting and decrypting strings
 ```
-$str        = 'message';
-$encrypt    = new orgelman\security\encrypt('sha256');
-$encrypted  = $encrypt->encrypt($str, $key, $method = '')['encrypted'];
+$str              = 'message';
+$encrypt          = new orgelman\security\encrypt('sha256');
+$encrypted        = $encrypt->encrypt($str, $key, $method = '')['encrypted'];
 
-$decrypted  = $encrypt->decrypt($encrypted, $key, $method = '');
+$decrypted        = $encrypt->decrypt($encrypted, $key, $method = '');
 ```
 ### Hashing and validating passwords
 ```
-$password   = 'password';
-$hash       = new orgelman\security\hash();
-$hashedPass = $hash->generate($password);
+$password         = 'password';
+$hash             = new orgelman\security\hash();
+$hashedPass       = $hash->generate($password);
 
 if($hash->valid(password, $hashedPass)) {
   echo 'Yay!';
