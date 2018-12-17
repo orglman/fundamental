@@ -7,7 +7,7 @@
  */
  
 namespace orgelman\functions\traits {
-  trait randomString {
+  trait stringRandom {
     function generateRandomString($length = 10) {
       $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
       $charactersLength = strlen($characters);
