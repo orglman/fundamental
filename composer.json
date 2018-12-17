@@ -1,15 +1,16 @@
 {
-    "name"          : "orglman/fundamental",
-    "type"          : "library",
-    "description"   : "A code library with fundamental functions",
+    "name"           : "orglman/fundamental",
+    "type"           : "library",
+    "description"    : "A code library with fundamental functions",
     "authors": [
         {
-            "name"  : "Tobias Jonson",
-            "email" : "git@orgelman.systems"
+            "name"   : "Tobias Jonson",
+            "email"  : "git@orgelman.systems"
         }
     ],
     "require": {
-        "greenlion/PHP-SQL-Parser" : "@dev"
+        "greenlion/PHP-SQL-Parser" : "@dev",
+        "cbschuld/Browser.php" : "@dev"
     },
     "require-dev": {
         
@@ -17,8 +18,9 @@
     "suggest": {
         
     },
+    "include-path"   : ["src/traits/"]
     "autoload": {
-        "classmap"  : ["src/"]
+        "classmap"   : ["src/"]
     },
-    "license"       : "MIT"
+    "license"        : "MIT"
 }
