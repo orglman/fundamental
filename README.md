@@ -1,11 +1,19 @@
 # Orgelman Fundamental Scripts (OFS)
 [![Build Status](https://travis-ci.org/orglman/fundamental.svg)](https://travis-ci.org/orglman/fundamental)
-[![Latest Stable Version](https://poser.pugx.org/orglman/fundamental/v/stable.svg)](https://packagist.org/packages/orglman/fundamental) [![Total Downloads](https://poser.pugx.org/orglman/fundamental/downloads)](https://packagist.org/packages/orglman/fundamental) [![Latest Unstable Version](https://poser.pugx.org/orglman/fundamental/v/unstable.svg)](https://packagist.org/packages/orglman/fundamental) [![License](https://poser.pugx.org/orglman/fundamental/license.svg)](https://packagist.org/packages/orglman/fundamental)
+
+[![Latest Stable Version](https://poser.pugx.org/orglman/fundamental/v/stable.svg)](https://packagist.org/packages/orglman/fundamental) 
+[![Latest Unstable Version](https://poser.pugx.org/orglman/fundamental/v/unstable.svg)](https://packagist.org/packages/orglman/fundamental) 
+
 [![star this repo](http://githubbadges.com/star.svg?user=orglman&repo=fundamental&style=flat)](https://github.com/orglman/fundamental)
 [![fork this repo](http://githubbadges.com/fork.svg?user=orglman&repo=fundamental&style=flat)](https://github.com/orglman/fundamental/fork)
 [![Pending Pull-Requests](http://githubbadges.herokuapp.com/orglman/fundamental/pulls.svg?style=flat)](https://github.com/orglman/fundamental/pulls)
 [![Open Issues](http://githubbadges.herokuapp.com/orglman/fundamental/issues.svg?style=flat)](https://github.com/orglman/fundamental/issues)
 
+[![Total Downloads](https://poser.pugx.org/orglman/fundamental/downloads)](https://packagist.org/packages/orglman/fundamental) 
+
+[![License](https://poser.pugx.org/orglman/fundamental/license.svg)](https://packagist.org/packages/orglman/fundamental)
+
+[![forthebadge](https://forthebadge.com/images/badges/fuck-it-ship-it.svg)]
 ## Code Examples
 
 ### Forbid direct access
