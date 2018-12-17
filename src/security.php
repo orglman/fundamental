@@ -37,7 +37,11 @@ namespace orgelman\security {
       public function textToBinary($str) {
          $bin = array();
          for($i=0; strlen($str)>$i; $i++) {
-             $bin[] = str_pad(decbin(mb_ord($str[$i])), 8, '0', STR_PAD_LEFT);
+            if(is_function('mb_ord')) {
+               $bin[] = str_pad(decbin(mb_ord($str[$i])), 8, '0', STR_PAD_LEFT);
+            } else {
+               $bin[] = str_pad(decbin(ord($str[$i])), 8, '0', STR_PAD_LEFT);
+            }
          }
          return implode(' ',$bin);
       }
@@ -46,7 +50,11 @@ namespace orgelman\security {
          
          $text = array();
          for($i=0; count($bin)>$i; $i++) {
-            $text[] = mb_chr(bindec(ltrim($bin[$i],'0')));
+            if(is_function('mb_chr')) {
+               $text[] = mb_chr(bindec(ltrim($bin[$i],'0')));
+            } else {
+               $text[] = chr(bindec(ltrim($bin[$i],'0')));
+            }
          }
       
          return implode($text);
