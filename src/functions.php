@@ -8,7 +8,7 @@
 
 namespace orgelman\functions {
    class Functions {
-      use orgelman\functions\traits\randomString;
+      use \orgelman\functions\traits\randomString;
       
       protected $root = null;
       protected $subcat = null;
