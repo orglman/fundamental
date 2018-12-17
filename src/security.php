@@ -7,6 +7,8 @@
  */
 namespace orgelman\security {
    class encrypt {
+      use \orgelman\functions\traits\randomString;
+      
       private $cipher_algorithm = '';
       private $cipher_method = 'AES-256-CBC';
       
@@ -29,20 +31,6 @@ namespace orgelman\security {
             $this->compress = $bool;
          }
          $this->compress = false;
-      }
-      public function randomNumber($length = 15) {
-         $nums = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-         // First number shouldn't be zero
-         $out = $nums[mt_rand( 1, strlen($nums)-1 )];  
-
-         // Add random numbers to your string
-         for ($p = 0; $p < $length-1; $p++)
-            $out .= $nums[mt_rand( 0, strlen($nums)-1 )];
-
-         // Format the output with commas if needed, otherwise plain output
-         
-         return $out;
       }
       
       
@@ -83,7 +71,7 @@ namespace orgelman\security {
          }
          
          $len = 32;
-         $algorithm = $this->textToBinary(mb_substr($this->cipher_algorithm.'_'.$this->randomNumber($len-strlen($this->cipher_algorithm)), 0, $len));
+         $algorithm = $this->textToBinary(mb_substr($this->cipher_algorithm.'_'.$this->generateRandomString($len-strlen($this->cipher_algorithm)), 0, $len));
          if(count(explode(' ',$algorithm)) !== $len) {
             $return['error'][] = 'Algorithm error';
             trigger_error('Algorithm error', E_USER_NOTICE); 
@@ -166,7 +154,7 @@ namespace orgelman\security {
       }
       public function generate($password) {
          if(defined("CRYPT_BLOWFISH") && CRYPT_BLOWFISH) {
-            $salt = '$2y$11$' . substr($this->encrypt->randomNumber(10).md5(uniqid(rand(), true)).$this->encrypt->randomNumber(10), 0, $this->saltMaxLength);
+            $salt = '$2y$11$' . substr($this->generateRandomString(10).md5(uniqid(rand(), true)).$this->generateRandomString(10), 0, $this->saltMaxLength);
             echo $salt;
             $hash = crypt($password, $salt);
          }
