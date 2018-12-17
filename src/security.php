@@ -88,9 +88,13 @@ namespace orgelman\security {
          }
          
          if((!$this->startsWith($str, $this->delimiter_characters)) || (!$this->endsWith($str, $this->delimiter_characters))) {
-            return array('encrypted' => trim($str));
+            return array('decrypted' => trim($str));
+         } else if(($this->startsWith($str, $this->delimiter_characters)) && ($this->endsWith($str, $this->delimiter_characters))) {
+            $str = trim(substr(substr($str,strlen($this->delimiter_characters)), 0, (0-strlen($this->delimiter_characters))));
          } else {
-            $str = trim(trim(trim($str),$this->delimiter_characters));
+            $return['error'][] = 'String not valid';
+            trigger_error('String not valid', E_USER_NOTICE); 
+            return $return;
          }
 
          $return = array('decrypted' => '', 'encrypted' => trim($str), 'key' => $key, 'safekey' => '', 'algorithm' => $this->cipher_algorithm, 'method' => $method, 'iv' => '', 'base64_encode' => array(), 'error' => array());
