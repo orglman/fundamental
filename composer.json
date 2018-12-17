@@ -1,7 +1,7 @@
 {
     "name"           : "orglman/fundamental",
     "type"           : "library",
-    "description"    : "A code library with fundamental functions",
+    "description"    : "A reposotory of fundamental features that are used in Orgelman's project.",
     "authors": [
         {
             "name"   : "Tobias Jonson",
