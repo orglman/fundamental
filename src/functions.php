@@ -9,6 +9,7 @@
 namespace orgelman\functions {
    class Functions {
       use \orgelman\functions\traits\stringRandom;
+      use \orgelman\functions\traits\stringSearch;
       
       protected $root = null;
       protected $subcat = null;
