@@ -10,14 +10,13 @@
         }
     ],
     "require": {
-        "greenlion/PHP-SQL-Parser" : "@dev",
-        "cbschuld/browser.php" : "dev-master"
+        "greenlion/PHP-SQL-Parser" : "@dev"
     },
     "require-dev": {
         
     },
     "suggest": {
-        
+        "cbschuld/browser.php" : "dev-master"
     },
     "autoload": {
         "classmap"   : ["src/", "src/traits/"]
