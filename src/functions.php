@@ -343,7 +343,7 @@ namespace orgelman\functions {
       // Get client browser info
       // https://github.com/cbschuld/Browser.php/tree/master/lib
       public function get_client() {
-         $this->browser = new Browser();
+         $this->browser = new \Browser();
 
          $this->client->browser = $this->browser->getBrowser();
          $this->client->platform = $this->browser->getPlatform();
