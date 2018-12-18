@@ -76,6 +76,12 @@ if($hash->valid(password, $hashedPass)) {
   echo 'Nay!';
 }
 ```
+### Tests
+There is a PHPUnit test script in the [test](https://github.com/orglman/fundamental/tree/master/test/) folder.
+
+Build status: [![Build Status](https://travis-ci.org/orglman/fundamental.svg)](https://travis-ci.org/orglman/fundamental)
+
+If this isn't passing, is there something you can do to help?
 
 ## Authors
 
