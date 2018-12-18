@@ -1,5 +1,6 @@
 # Orgelman Fundamental Scripts (OFS)
 [![Build Status](https://travis-ci.org/orglman/fundamental.svg)](https://travis-ci.org/orglman/fundamental)
+[![composer.lock available](https://poser.pugx.org/orglman/fundamental/composerlock)](https://packagist.org/packages/orglman/fundamental)
 
 [![Latest Stable Version](https://poser.pugx.org/orglman/fundamental/v/stable.svg)](https://packagist.org/packages/orglman/fundamental)
 [![Latest Unstable Version](https://poser.pugx.org/orglman/fundamental/v/unstable.svg)](https://packagist.org/packages/orglman/fundamental)
