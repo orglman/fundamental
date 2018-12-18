@@ -19,6 +19,19 @@
 
 A reposotory of fundamental features that are used in Orgelman's project.
 
+## Install
+Via composer
+```
+composer require orglman/fundamental
+
+{
+   "require": {
+      "orglman/fundamental"      : "@dev"
+   }
+}
+
+```
+
 ## Code Examples
 
 ### Forbid direct access
