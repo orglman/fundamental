@@ -10,7 +10,8 @@
         }
     ],
     "require": {
-        "greenlion/PHP-SQL-Parser" : "@dev"
+        "greenlion/PHP-SQL-Parser" : "@dev",
+        "cbschuld/browser.php" : "dev-master"
     },
     "require-dev": {
         
