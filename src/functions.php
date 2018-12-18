@@ -8,6 +8,7 @@
 
 namespace orgelman\functions {
    class Functions {
+      use \orgelman\functions\traits\externalLoadResource;
       use \orgelman\functions\traits\stringRandom;
       use \orgelman\functions\traits\stringSearch;
       
