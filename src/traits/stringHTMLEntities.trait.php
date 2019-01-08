@@ -9,7 +9,7 @@
 namespace orgelman\functions\traits {
   trait stringHTMLEntities {
     public function convertToHTMLEntities($str) {
-      $str = trait($str);
+      $str = trim($str);
       $str = mb_convert_encoding($str , 'UTF-32', 'UTF-8');
       $t = unpack("N*", $str);
       $t = array_map(function($n) { return "&#$n;"; }, $t);
