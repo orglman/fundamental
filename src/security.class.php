@@ -41,8 +41,8 @@ namespace orgelman\security {
       
       
       public function encrypt($str, $key, $method = '') {
-         $str = convertToHTMLEntities($str);
-         $key = convertToHTMLEntities($key);
+         $str = $this->convertToHTMLEntities($str);
+         $key = $this->convertToHTMLEntities($key);
          
          if($method == '') {
             $method = $this->cipher_method;
@@ -87,7 +87,7 @@ namespace orgelman\security {
          return $return;
       }
       public function decrypt($str, $key, $method = '') {
-         $key = convertToHTMLEntities($key);
+         $key = $this->convertToHTMLEntities($key);
          if($method == '') {
             $method = $this->cipher_method;
          }
@@ -161,7 +161,7 @@ namespace orgelman\security {
          
       }
       public function generate($password) {
-         $password = convertToHTMLEntities($password);
+         $password = $this->convertToHTMLEntities($password);
          if(defined("CRYPT_BLOWFISH") && CRYPT_BLOWFISH) {
             $salt = '$2y$11$' . trim(substr($this->generateRandomString(10).md5(uniqid(rand(), true)).$this->generateRandomString(10), 0, $this->saltMaxLength)) . '$';
             $hash = crypt($password, $salt);
