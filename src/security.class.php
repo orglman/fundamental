@@ -7,9 +7,10 @@
  */
 namespace orgelman\security {
    class encrypt {
+      use \orgelman\functions\traits\stringConvert;
+      use \orgelman\functions\traits\stringHTMLEntities;
       use \orgelman\functions\traits\stringRandom;
       use \orgelman\functions\traits\stringSearch;
-      use \orgelman\functions\traits\stringConvert;
       
       private $cipher_algorithm = '';
       private $cipher_method = 'AES-256-CBC';
@@ -40,6 +41,9 @@ namespace orgelman\security {
       
       
       public function encrypt($str, $key, $method = '') {
+         $str = convertToHTMLEntities($str);
+         $key = convertToHTMLEntities($key);
+         
          if($method == '') {
             $method = $this->cipher_method;
          }
@@ -83,6 +87,7 @@ namespace orgelman\security {
          return $return;
       }
       public function decrypt($str, $key, $method = '') {
+         $key = convertToHTMLEntities($key);
          if($method == '') {
             $method = $this->cipher_method;
          }
@@ -135,7 +140,7 @@ namespace orgelman\security {
          
          $return['base64_encode'] = $decrypts;
          foreach($return['base64_encode'] as $decrypting) {
-            $return['decrypted'] .= openssl_decrypt(base64_decode($this->binaryToText($decrypting)), $method, $key, OPENSSL_RAW_DATA, $iv);
+            $return['decrypted'] .= $str = convertFromHTMLEntities(openssl_decrypt(base64_decode($this->binaryToText($decrypting)), $method, $key, OPENSSL_RAW_DATA, $iv));
          }
          $return['decrypted'] = stripslashes($return['decrypted']);
          
@@ -144,6 +149,9 @@ namespace orgelman\security {
    }
    
    class hash {
+      use \orgelman\functions\traits\stringHTMLEntities;
+      use \orgelman\functions\traits\stringRandom;
+      
       private $saltMaxLength = 255;
 
       public function __construct() {
@@ -153,9 +161,9 @@ namespace orgelman\security {
          
       }
       public function generate($password) {
+         $password = convertToHTMLEntities($password);
          if(defined("CRYPT_BLOWFISH") && CRYPT_BLOWFISH) {
-            $salt = '$2y$11$' . substr($this->generateRandomString(10).md5(uniqid(rand(), true)).$this->generateRandomString(10), 0, $this->saltMaxLength);
-            echo $salt;
+            $salt = '$2y$11$' . trim(substr($this->generateRandomString(10).md5(uniqid(rand(), true)).$this->generateRandomString(10), 0, $this->saltMaxLength)) . '$';
             $hash = crypt($password, $salt);
          }
          return $this->encrypt->encrypt($hash, substr(mb_strtolower($password),0,ceil(strlen($password)/2)))['encrypted'];
