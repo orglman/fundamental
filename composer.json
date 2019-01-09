@@ -17,7 +17,7 @@
         "phpunit/phpunit": "^7"
     },
     "suggest": {
-        "cbschuld/browser.php" : "dev-master", 
+        "cbschuld/browser.php" : "dev-master"
     },
     "autoload": {
         "classmap"   : ["src/", "src/traits/"]
