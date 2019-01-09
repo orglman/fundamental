@@ -8,13 +8,21 @@
  
 namespace orgelman\functions\traits {
   trait stringConvert {
-      public function textToBinary($str) {
+      public function textToBinary($str, $pad = 8) {
          $bin = array();
          for($i=0; strlen($str)>$i; $i++) {
             if(function_exists('mb_ord')) {
-               $bin[] = str_pad(decbin(mb_ord($str[$i])), 8, '0', STR_PAD_LEFT);
+               if(is_numeric($pad)) {
+                  $bin[] = str_pad(decbin(mb_ord($str[$i])), $pad, '0', STR_PAD_LEFT);
+               } else {
+                  $bin[] = decbin(mb_ord($str[$i]));
+               }
             } else {
-               $bin[] = str_pad(decbin(ord($str[$i])), 8, '0', STR_PAD_LEFT);
+               if(is_numeric($pad)) {
+                  $bin[] = str_pad(decbin(ord($str[$i])), $pad, '0', STR_PAD_LEFT);
+               } else {
+                  $bin[] = decbin(ord($str[$i]));
+               }
             }
          }
          return implode(' ',$bin);
