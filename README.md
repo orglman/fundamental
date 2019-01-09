@@ -60,7 +60,7 @@ echo $functions->get_client_ip();
 ### Encrypting and decrypting strings
 ```
 $str              = 'message';
-$encrypt          = new orgelman\security\encrypt('sha256');
+$encrypt          = new orgelman\security\encrypt($compress = 'true','sha256');
 $encrypted        = $encrypt->encrypt($str, $key, $method = '')['encrypted'];
 
 $decrypted        = $encrypt->decrypt($encrypted, $key, $method = '')['decrypted'];
@@ -68,7 +68,7 @@ $decrypted        = $encrypt->decrypt($encrypted, $key, $method = '')['decrypted
 ### Hashing and validating passwords
 ```
 $password         = 'password';
-$hash             = new orgelman\security\hash();
+$hash             = new orgelman\security\hash($compress = 'true');
 $hashedPass       = $hash->generate($password);
 
 if($hash->valid(password, $hashedPass)) {
