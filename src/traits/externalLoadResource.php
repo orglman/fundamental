@@ -73,7 +73,7 @@ namespace orgelman\functions\traits {
          
          return $return;
       }
-      public function createHtmlScript($src, $type = 'text/javascript', $charset = '', $asunc = '', $defer = '', $extra = '') {
+      public function createHtmlScript($src, $type = 'text/javascript', $charset = '', $async = '', $defer = '', $extra = '') {
          $return = '';
          if(!isset($this->loadedResources[$src])) {
             if($this->remote_file_esists($src)) {
@@ -89,7 +89,7 @@ namespace orgelman\functions\traits {
                if($charset!='') {
                   $elements[] = 'charset="'.trim($charset).'"';
                }
-               if($asunc!='') {
+               if($async!='') {
                   $elements[] = 'async'; // When present, it specifies that the script will be executed asynchronously as soon as it is available.
                }
                if($defer!='') {
