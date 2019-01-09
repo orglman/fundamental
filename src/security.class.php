@@ -7,10 +7,10 @@
  */
 namespace orgelman\security {
    class encrypt {
-      use \orgelman\functions\traits\stringHTMLEntities;
-      use \orgelman\functions\traits\stringConvert;
-      use \orgelman\functions\traits\stringRandom;
-      use \orgelman\functions\traits\stringSearch;
+      use \orgelman\fundamental\traits\stringHTMLEntities;
+      use \orgelman\fundamental\traits\stringConvert;
+      use \orgelman\fundamental\traits\stringRandom;
+      use \orgelman\fundamental\traits\stringSearch;
       
       private $cipher_algorithm     = '';
       private $cipher_method        = 'AES-256-CBC';
@@ -174,10 +174,17 @@ namespace orgelman\security {
    }
    
    class hash {
-      use \orgelman\functions\traits\stringHTMLEntities;
-      use \orgelman\functions\traits\stringRandom;
+      use \orgelman\fundamental\traits\stringHTMLEntities;
+      use \orgelman\fundamental\traits\stringRandom;
       
       private $saltMaxLength = 255;
+      
+      public  $password_lenghtMin   = null;
+      public  $password_lenghtMax   = null;
+      public  $password_number      = null;
+      public  $password_letter      = null;
+      public  $password_capital     = null;
+      public  $password_symbol      = null;
 
       public function __construct($compress = true) {
          $this->encrypt = new encrypt($compress);
@@ -185,13 +192,134 @@ namespace orgelman\security {
       public function __destruct() {
          
       }
-      public function generate($password) {
-         $password = $this->convertToHTMLEntities($password);
-         if(defined("CRYPT_BLOWFISH") && CRYPT_BLOWFISH) {
-            $salt = '$2y$11$' . trim(substr($this->generateRandomString(10).md5(uniqid(rand(), true)).$this->generateRandomString(10), 0, $this->saltMaxLength)) . '$';
-            $hash = crypt($password, $salt);
+      
+      public function setPasswordLenghtMin($num) {
+         if(is_numeric($num)) {
+            $this->password_lenghtMin = $num;
+            return $this->password_lenghtMin;
          }
-         return $this->encrypt->encrypt($hash, substr(mb_strtolower($password),0,ceil(strlen($password)/2)))['encrypted'];
+         return false;
+      }
+      public function setPasswordLenghtMax($num) {
+         if(is_numeric($num)) {
+            $this->password_lenghtMax = $num;
+            return $this->password_lenghtMax;
+         }
+         return false;
+      }
+      public function setPasswordNumber($num) {
+         if(is_numeric($num)) {
+            $this->password_number = $num;
+            return $this->password_number;
+         }
+         return false;
+      }
+      public function setPasswordLetter($num) {
+         if(is_numeric($num)) {
+            $this->password_letter = $num;
+            return $this->password_letter;
+         }
+         return false;
+      }
+      public function setPasswordCapital($num) {
+         if(is_numeric($num)) {
+            $this->password_capital = $num;
+            return $this->password_capital;
+         }
+         return false;
+      }
+      public function setPasswordSymbol($num) {
+         if(is_numeric($num)) {
+            $this->password_symbol = $num;
+            return $this->password_symbol;
+         }
+         return false;
+      }
+      
+      public function test($password) {
+         $error = array();
+         if(($this->password_lenghtMin!=null) && (strlen($password) < $this->password_lenghtMin)) {
+            $error[] = "Password too short! Minimum ".$this->password_lenghtMin." characters.";
+         }
+         if(($this->password_lenghtMax!=null) && (strlen($password) > $this->password_lenghtMax)) {
+            $error[] = "Password too long! Maximum ".$this->password_lenghtMax." characters.";
+         }
+         
+         if(($this->password_number!=null) && (!preg_match("#[0-9]+#", $password, $output))) {
+            $error[] = "Password must include at least ".$this->password_number." number(s)!";
+         } elseif($this->password_number>1) {
+            preg_match_all("/\W+/", $password, $output);
+            $output = $output[0];
+            $c = 0;
+            foreach($output as $out) {
+               $c = $c + strlen($out);
+            }
+            if($c<$this->password_number) {
+               $error[] = "Password must include at least ".$this->password_number." number(s)!";
+            }
+         }
+
+         if(($this->password_letter!=null) && (!preg_match("#[a-z]+#", $password, $output))) {
+            $error[] = "Password must include at least ".$this->password_letter." letter(s)! ";
+         } elseif($this->password_letter>1) {
+            preg_match_all("/\W+/", $password, $output);
+            $output = $output[0];
+            $c = 0;
+            foreach($output as $out) {
+               $c = $c + strlen($out);
+            }
+            if($c<$this->password_letter) {
+               $error[] = "Password must include at least ".$this->password_letter." letter(s)! ";
+            }
+         }
+
+         if(($this->password_capital!=null) && (!preg_match("#[A-Z]+#", $password, $output))) {
+            $error[] = "Password must include at least ".$this->password_capital." capital letter(s)! ";
+         } elseif($this->password_capital>1) {
+            preg_match_all("/\W+/", $password, $output);
+            $output = $output[0];
+            $c = 0;
+            foreach($output as $out) {
+               $c = $c + strlen($out);
+            }
+            if($c<$this->password_capital) {
+               $error[] = "Password must include at least ".$this->password_capital." capital letter(s)! ";
+            }
+         }
+         
+         
+         if(($this->password_symbol!=null) && (!preg_match("/\W+/", $password))) {
+            $error[] = "Password must include at least ".$this->password_symbol." symbol(s)!";
+         } elseif($this->password_symbol>1) {
+            preg_match_all("/\W+/", $password, $output);
+            $output = $output[0];
+            $c = 0;
+            foreach($output as $out) {
+               $c = $c + strlen($out);
+            }
+            if($c<$this->password_symbol) {
+               $error[] = "Password must include at least ".$this->password_symbol." symbol(s)!";
+            }
+         }
+
+         if(!empty($error)){
+            return $error;
+         } else {
+            return true;
+         }
+      }
+      public function generate($password) {
+         $test = $this->test($password);
+         if($test == true) {
+            $password = $this->convertToHTMLEntities($password);
+            if(defined("CRYPT_BLOWFISH") && CRYPT_BLOWFISH) {
+               $salt = '$2y$11$' . trim(substr($this->generateRandomString(10).md5(uniqid(rand(), true)).$this->generateRandomString(10), 0, $this->saltMaxLength)) . '$';
+               $hash = crypt($password, $salt);
+            }
+            return $this->encrypt->encrypt($hash, substr(mb_strtolower($password),0,ceil(strlen($password)/2)))['encrypted'];
+         } else {
+            return $test;
+         }
       }
       public function verify($password, $hashedPassword) {
          $hashedPassword = $this->encrypt->decrypt($hashedPassword,substr(mb_strtolower($password),0,ceil(strlen($password)/2)))['decrypted'];
