@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License (GNU GPL)
  */
  
-namespace orgelman\functions\traits {
+namespace orgelman\fundamental\traits {
   trait stringHTMLEntities {
     public function convertToHTMLEntities($str) {
       $str = trim($str);
