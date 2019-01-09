@@ -15,8 +15,6 @@
 
 [![License](https://poser.pugx.org/orglman/fundamental/license.svg)](https://packagist.org/packages/orglman/fundamental)
 
-![forthebadge](https://forthebadge.com/images/badges/fuck-it-ship-it.svg)
-
 A reposotory of fundamental features that are used in Orgelman's project.
 
 ## Install
