@@ -13,7 +13,7 @@
         "greenlion/PHP-SQL-Parser" : "@dev"
     },
     "require-dev": {
-        
+        "phpunit/phpunit": "^7"
     },
     "suggest": {
         "cbschuld/browser.php" : "dev-master", 
