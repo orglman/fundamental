@@ -17,6 +17,7 @@
     },
     "suggest": {
         "cbschuld/browser.php" : "dev-master"
+        "bjeavons/zxcvbn-php": "^0.4"
     },
     "autoload": {
         "classmap"   : ["src/", "src/traits/"]
