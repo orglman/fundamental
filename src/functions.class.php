@@ -8,9 +8,9 @@
 
 namespace orgelman\functions {
    class Functions {
-      use \orgelman\functions\traits\externalLoadResource;
-      use \orgelman\functions\traits\stringRandom;
-      use \orgelman\functions\traits\stringSearch;
+      use \orgelman\fundamental\traits\externalLoadResource;
+      use \orgelman\fundamental\traits\stringRandom;
+      use \orgelman\fundamental\traits\stringSearch;
       
       protected $root = null;
       protected $subcat = null;
