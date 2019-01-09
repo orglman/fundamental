@@ -65,16 +65,52 @@ $encrypted        = $encrypt->encrypt($str, $key, $method = '')['encrypted'];
 
 $decrypted        = $encrypt->decrypt($encrypted, $key, $method = '')['decrypted'];
 ```
+
+### Test passwords
+```
+$hash             = new orgelman\security\hash($compress = 'true');
+$password         = 'password';
+
+$hash->setPasswordLenghtMin($num);
+$hash->setPasswordLenghtMax($num);
+$hash->setPasswordNumber($num);
+$hash->setPasswordLetter($num);
+$hash->setPasswordCapital($num);
+$hash->setPasswordSymbol($num);
+
+$test = $hash->test($password);
+if($test!=true) {
+   echo '<ul>';
+   foreach(test as $error) {
+      echo '<li>'.$error.'</li>';
+   }
+   echo '</ul>';
+}
+```
 ### Hashing and validating passwords
 ```
 $password         = 'password';
 $hash             = new orgelman\security\hash($compress = 'true');
-$hashedPass       = $hash->generate($password);
+$hash->setPasswordLenghtMin($num);
+$hash->setPasswordLenghtMax($num);
+$hash->setPasswordNumber($num);
+$hash->setPasswordLetter($num);
+$hash->setPasswordCapital($num);
+$hash->setPasswordSymbol($num);
 
-if($hash->valid(password, $hashedPass)) {
-  echo 'Yay!';
+$hashedPass       = $hash->generate($password);
+if(!is_string($hashedPass)) {
+   echo '<ul>';
+   foreach(hashedPass as $error) {
+      echo '<li>'.$error.'</li>';
+   }
+   echo '</ul>';
 } else {
-  echo 'Nay!';
+  if($hash->valid(password, $hashedPass)) {
+    echo 'Yay!';
+  } else {
+    echo 'Nay!';
+  }
 }
 ```
 ## Tests
