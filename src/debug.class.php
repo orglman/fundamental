@@ -5,7 +5,7 @@
  * @author  Tobias Jonson <git@orgelman.systems>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License (GNU GPL)
  */
-namespace orgelman\debug {
+namespace orgelman\fundamental\debug {
    class debug {
    
    }
