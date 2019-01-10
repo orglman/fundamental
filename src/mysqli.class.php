@@ -7,13 +7,13 @@
  */
 
 /**
- * define("SQL_HOST"       , "host");
- * define("SQL_PORT"       , "port");
- * define("SQL_NAME"       , "database");
- * define("SQL_USERNAME"   , "username");
- * define("SQL_PASSWORD"   , "password");
- * define("SQL_PREFIX"     , "pre_");
- * define("SQL_SOCKET"     , "");
+ * define("OFS_SQL_HOST"       , "host");
+ * define("OFS_SQL_PORT"       , "port");
+ * define("OFS_SQL_NAME"       , "database");
+ * define("OFS_SQL_USERNAME"   , "username");
+ * define("OFS_SQL_PASSWORD"   , "password");
+ * define("OFS_SQL_PREFIX"     , "pre_");
+ * define("OFS_SQL_SOCKET"     , "");
  * 
  * Examples:
  * Check if _POST or _GET ["variable"] exists then load it or leave str empty
@@ -45,42 +45,42 @@ namespace orgelman\mysqli {
       private $SQL_SOCKET     = "";
 
       public function __construct($SQL_HOST="",$SQL_USERNAME="",$SQL_PASSWORD="",$SQL_NAME="",$SQL_PREFIX="",$SQL_SOCKET="") {
-         //Setting SQL constants
-         if(defined("SQL_HOST")) {
-            $this->SQL_HOST      = constant("SQL_HOST");
+         //Setting SQL 
+         if(defined("OFS_SQL_HOST")) {
+            $this->SQL_HOST      = constant("OFS_SQL_HOST");
          } else {
             $this->SQL_HOST      = $SQL_HOST;
-            define("SQL_HOST",$this->SQL_HOST);
+            define("OFS_SQL_HOST",$this->SQL_HOST);
          }
-         if(defined("SQL_USERNAME")) {
-            $this->SQL_USERNAME  = constant("SQL_USERNAME");
+         if(defined("OFS_SQL_USERNAME")) {
+            $this->SQL_USERNAME  = constant("OFS_SQL_USERNAME");
          } else {
             $this->SQL_USERNAME  = $SQL_USERNAME;
-            define("SQL_USERNAME",$this->SQL_USERNAME);
+            define("OFS_SQL_USERNAME",$this->SQL_USERNAME);
          }
-         if(defined("SQL_PASSWORD")) {
-            $this->SQL_PASSWORD  = constant("SQL_PASSWORD");
+         if(defined("OFS_SQL_PASSWORD")) {
+            $this->SQL_PASSWORD  = constant("OFS_SQL_PASSWORD");
          } else {
             $this->SQL_PASSWORD  = $SQL_PASSWORD;
-            define("SQL_PASSWORD",$this->SQL_PASSWORD);
+            define("OFS_SQL_PASSWORD",$this->SQL_PASSWORD);
          }
-         if(defined("SQL_NAME")) {
-            $this->SQL_NAME      = constant("SQL_NAME");
+         if(defined("OFS_SQL_NAME")) {
+            $this->SQL_NAME      = constant("OFS_SQL_NAME");
          } else {
             $this->SQL_NAME      = $SQL_NAME;
-            define("SQL_NAME",$this->SQL_NAME);
+            define("OFS_SQL_NAME",$this->SQL_NAME);
          }
-         if(defined("SQL_PREFIX")) {
-            $this->SQL_PREFIX    = constant("SQL_PREFIX");
+         if(defined("OFS_SQL_PREFIX")) {
+            $this->SQL_PREFIX    = constant("OFS_SQL_PREFIX");
          } else {
             $this->SQL_PREFIX    = $SQL_PREFIX;
-            define("SQL_PREFIX",$this->SQL_PREFIX);
+            define("OFS_SQL_PREFIX",$this->SQL_PREFIX);
          }
-         if(defined("SQL_SOCKET")) {
-            $this->SQL_SOCKET    = constant("SQL_SOCKET");
+         if(defined("OFS_SQL_SOCKET")) {
+            $this->SQL_SOCKET    = constant("OFS_SQL_SOCKET");
          } else {
             $this->SQL_SOCKET    = $SQL_SOCKET;
-            define("SQL_SOCKET",$this->SQL_SOCKET);
+            define("OFS_SQL_SOCKET",$this->SQL_SOCKET);
          }
 
          $this->DBh = $this->StartDBConnection();
@@ -95,7 +95,7 @@ namespace orgelman\mysqli {
 
          } else {
             $DBh = "";
-            $DBh = @mysqli_connect(SQL_HOST,SQL_USERNAME,SQL_PASSWORD,SQL_NAME) or die("SQL ERROR (".__LINE__."): Connection error: ".__LINE__);
+            $DBh = @mysqli_connect(OFS_SQL_HOST,OFS_SQL_USERNAME,OFS_SQL_PASSWORD,OFS_SQL_NAME) or die("SQL ERROR (".__LINE__."): Connection error: ".__LINE__);
             if (mysqli_connect_errno()) {
                trigger_error('SQL ERROR ('.__LINE__.'): Connection error',E_USER_ERROR);
                die("SQL ERROR (".__LINE__."): Connection error: ".__LINE__);
@@ -220,9 +220,9 @@ namespace orgelman\mysqli {
                if($qu!="") {
                   $strpos = strpos($qu,$prefix);
                   if(substr($qu,($strpos-1),1) == "`") {
-                     $qu = str_replace($prefix,constant("SQL_NAME")."`.`".constant("SQL_PREFIX")."",$qu);
+                     $qu = str_replace($prefix,constant("OFS_SQL_NAME")."`.`".constant("OFS_SQL_PREFIX")."",$qu);
                   } else {
-                     $qu = str_replace($prefix,"`".constant("SQL_NAME")."`.`".constant("SQL_PREFIX")."",$qu);
+                     $qu = str_replace($prefix,"`".constant("OFS_SQL_NAME")."`.`".constant("OFS_SQL_PREFIX")."",$qu);
                   }
                }
                $this->verify($qu,$allow,$caller);
@@ -241,9 +241,9 @@ namespace orgelman\mysqli {
             if($q!="") {
                $strpos = strpos($q,$prefix);
                if(substr($q,($strpos-1),1) == "`") {
-                  $q = str_replace($prefix,constant("SQL_NAME")."`.`".constant("SQL_PREFIX")."",$q);
+                  $q = str_replace($prefix,constant("OFS_SQL_NAME")."`.`".constant("OFS_SQL_PREFIX")."",$q);
                } else {
-                  $q = str_replace($prefix,"`".constant("SQL_NAME")."`.`".constant("SQL_PREFIX")."",$q);
+                  $q = str_replace($prefix,"`".constant("OFS_SQL_NAME")."`.`".constant("OFS_SQL_PREFIX")."",$q);
                }
             }
             $this->verify($q,$allow,$caller);
@@ -299,13 +299,13 @@ namespace orgelman\mysqli {
             $t = $tables;
             $tables = array();
             foreach($t as $ta) {
-               $tables[] = "`".constant("SQL_PREFIX").$ta."`";
+               $tables[] = "`".constant("OFS_SQL_PREFIX").$ta."`";
             }
          } else {
             if($tables!='*') {
                $t = $tables;
                $tables = array();
-               $tables[] = "`".constant("SQL_PREFIX").$t."`";
+               $tables[] = "`".constant("OFS_SQL_PREFIX").$t."`";
             }
             if($tables == '*') {
                $tables = array();
@@ -347,7 +347,7 @@ namespace orgelman\mysqli {
                $return.= '-- Generation Time '.date("Y-m-d H:i:s e")."\n"."\n";
                $return.= '-- orgelman systems'."\n"."\n";
                $return.= '--'."\n";
-               $return.= '-- Database: '.constant("SQL_NAME").''."\n";
+               $return.= '-- Database: '.constant("OFS_SQL_NAME").''."\n";
                $return.= '--'."\n"."\n";
                $return.= '-- --------------------------------------------------------'."\n";
                $return.= '--'."\n";
