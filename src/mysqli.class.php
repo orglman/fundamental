@@ -29,7 +29,7 @@
  *
  * }
  */
-namespace orgelman\mysqli {
+namespace orgelman\fundamental\mysqli {
    use PHPSQLParser\PHPSQLParser;
 
    class MySQLi {
