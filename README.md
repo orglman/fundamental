@@ -48,14 +48,14 @@ echo $functions->timeElapsed();
 ```
 ### Hide emails
 ```php
-$functions        = new orgelman\functions\Functions();
+$functions        = new \orgelman\fundamental\scripts\functions();
 echo $functions->obfuscate_email('test@example.com');
 echo $functions->botTrap('test@example.com');
 ```
 
 ### Get user agent, IP and client info 
 ```php
-$functions        = new orgelman\functions\Functions();
+$functions        = new \orgelman\fundamental\scripts\functions();
 print_r($functions->get_client());
 echo $functions->get_client_ua();
 echo $functions->get_client_ip();
@@ -64,7 +64,7 @@ echo $functions->get_client_ip();
 ### Encrypting and decrypting strings
 ```php
 $str              = 'message';
-$encrypt          = new orgelman\security\encrypt($compress = 'true','sha256');
+$encrypt          = new orgelman\fundamental\security\encrypt($compress = 'true','sha256');
 $encrypted        = $encrypt->encrypt($str, $key, $method = '')['encrypted'];
 
 $decrypted        = $encrypt->decrypt($encrypted, $key, $method = '')['decrypted'];
@@ -72,7 +72,7 @@ $decrypted        = $encrypt->decrypt($encrypted, $key, $method = '')['decrypted
 
 ### Test passwords
 ```php
-$hash             = new orgelman\security\hash($compress = 'true');
+$hash             = new orgelman\fundamental\security\hash($compress = 'true');
 $password         = 'password';
 
 $hash->setPasswordLenghtMin($num);
@@ -94,7 +94,7 @@ if($test!=true) {
 ### Hashing and validating passwords
 ```php
 $password         = 'password';
-$hash             = new orgelman\security\hash($compress = 'true');
+$hash             = new orgelman\fundamental\security\hash($compress = 'true');
 $hash->setPasswordLenghtMin($num); // Password minimum lenght
 $hash->setPasswordLenghtMax($num); // Password maximum lenght
 $hash->setPasswordNumber($num); // How many numbers the password must contain
