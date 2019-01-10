@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License (GNU GPL)
  */
 
-namespace orgelman\fundamental\functions {
+namespace orgelman\fundamental\scripts {
    class functions {
       use \orgelman\fundamental\traits\externalLoadResource;
       use \orgelman\fundamental\traits\stringRandom;
