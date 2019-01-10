@@ -6,8 +6,8 @@
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License (GNU GPL)
  */
 
-namespace orgelman\functions {
-   class Functions {
+namespace orgelman\fundamental\functions {
+   class functions {
       use \orgelman\fundamental\traits\externalLoadResource;
       use \orgelman\fundamental\traits\stringRandom;
       use \orgelman\fundamental\traits\stringSearch;
