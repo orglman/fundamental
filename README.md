@@ -43,7 +43,7 @@ if(get_included_files()[0]==__FILE__){header($_SERVER['SERVER_PROTOCOL'].' 401 U
 ```
 ### Getting script elapsed time 
 ```php
-$functions        = new orgelman\functions\Functions($root = null, $start = microtime(true));
+$functions        = new \orgelman\fundamental\scripts\functions($root = null, $start = microtime(true));
 echo $functions->timeElapsed();
 ```
 ### Hide emails
