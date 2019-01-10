@@ -406,5 +406,12 @@ namespace orgelman\security {
          $hashedPassword = $this->encrypt->decrypt($hashedPassword,substr(mb_strtolower($password),0,ceil(strlen($password)/2)))['decrypted'];
          return crypt($password, $hashedPassword) == $hashedPassword;
       }
+      
+      
+      // number strenght();
+      public function strenght() {
+         $zxcvbn = new ZxcvbnPhp\Zxcvbn\Zxcvbn();
+         $strength = $zxcvbn->passwordStrength('password', $userData);
+      }
    }
 }
