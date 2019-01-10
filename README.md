@@ -95,12 +95,13 @@ if($test!=true) {
 ```php
 $password         = 'password';
 $hash             = new orgelman\security\hash($compress = 'true');
-$hash->setPasswordLenghtMin($num);
-$hash->setPasswordLenghtMax($num);
-$hash->setPasswordNumber($num);
-$hash->setPasswordLetter($num);
-$hash->setPasswordCapital($num);
-$hash->setPasswordSymbol($num);
+$hash->setPasswordLenghtMin($num); // Password minimum lenght
+$hash->setPasswordLenghtMax($num); // Password maximum lenght
+$hash->setPasswordNumber($num); // How many numbers the password must contain
+$hash->setPasswordLetter($num); // How many letters the password must contain
+$hash->setPasswordCapital($num); // How many CAPS the password must contain
+$hash->setPasswordSymbol($num); // How many symbols the password must contain
+$hash->setPasswordStrength($num); // How strong the password must be (0-4)
 
 $hashedPass       = $hash->generate($password);
 if(!is_string($hashedPass)) {
