@@ -227,6 +227,7 @@ namespace orgelman\security {
       public  $password_letter      = null;
       public  $password_capital     = null;
       public  $password_symbol      = null;
+      public  $password_strength    = null;
 
       // void new orgelman\security\hash(bool $compress, string $cipher_algorithm);
       public function __construct($compress = true) {
@@ -237,7 +238,7 @@ namespace orgelman\security {
       
       // mixed setPasswordLenghtMin(number $num);
       public function setPasswordLenghtMin($num) {
-         if(is_numeric($num)) && (($this->password_lenghtMax==null) || ($this->password_lenghtMax>$num)) {
+         if((is_numeric($num)) && (($this->password_lenghtMax==null) || ($this->password_lenghtMax>$num))) {
             $this->password_lenghtMin = $num;
             return $this->password_lenghtMin;
          }
@@ -248,7 +249,7 @@ namespace orgelman\security {
       
       // mixed setPasswordLenghtMax(number $num);
       public function setPasswordLenghtMax($num) {
-         if(is_numeric($num)) && (($this->password_lenghtMin==null) || ($this->password_lenghtMin<$num)) {
+         if((is_numeric($num)) && (($this->password_lenghtMin==null) || ($this->password_lenghtMin<$num))) {
             $this->password_lenghtMax = $num;
             return $this->password_lenghtMax;
          }
@@ -299,6 +300,17 @@ namespace orgelman\security {
          return false;
       }
       
+      // Set needed password strength
+      
+      // mixed setPasswordStrength(number $num);
+      public function setPasswordStrength($num) {
+         if((is_numeric($num)) && (($num>=0) && ($num<=4))) {
+            $this->password_strength = $num;
+            return $this->password_strength;
+         }
+         return false;
+      }
+      
       // Test password to the conditions above
       // If more than one is needed the preg_match_all will count all letters in the array
       // Returns array with errors or true
@@ -306,6 +318,10 @@ namespace orgelman\security {
       // mixed test(string $password);
       public function test($password) {
          $error = array();
+         if($password == trim($password) && strpos($password, ' ') !== false) {
+            $error[] = "Password can not contain spaces!";
+         }
+         
          if(($this->password_lenghtMin!=null) && (strlen($password) < $this->password_lenghtMin)) {
             $error[] = "Password too short! Minimum ".$this->password_lenghtMin." characters.";
          }
@@ -369,6 +385,10 @@ namespace orgelman\security {
                $error[] = "Password must include at least ".$this->password_symbol." symbol(s)!";
             }
          }
+         
+         if(($this->password_strength!=null) && (($this->strength($password)!==false) && ($this->strength($password)['score']<=$this->password_strength))) {
+            $error[] = "Password too weak! ".$this->strength($password)['score'].'/4 minimum '.$this->password_strength;
+         }
 
          if(!empty($error)){
             return $error;
@@ -379,10 +399,13 @@ namespace orgelman\security {
       
       // mixed generate(string $password);
       public function generate($password) {
+         $password = trim($password);
          $test = $this->test($password);
          
          // Pass if the password matches the criterias above or return the errors
-         if($test == true) {
+         if($test === true) {
+            // Save password for strenght test
+            $this->password = $password;
             // Convert password to html entities to support more signs and symbols
             $password = $this->convertToHTMLEntities($password);
             
@@ -408,10 +431,41 @@ namespace orgelman\security {
       }
       
       
-      // number strenght();
-      public function strenght() {
-         $zxcvbn = new ZxcvbnPhp\Zxcvbn\Zxcvbn();
-         $strength = $zxcvbn->passwordStrength('password', $userData);
+      
+      // Calculate strength of password
+      // Using https://github.com/bjeavons/zxcvbn-php
+      private $password             = null;
+      private $userdata             = array();
+      
+      // void setUserdata(string $data);
+      public function setUserdata($data) {
+         if(is_array($data)) {
+            foreach($data as $str) {
+               $this->setUserdata($str);
+            }
+         } else {
+            if(($data!='') && (!in_array($data, $this->userdata))) {
+               $this->userdata[] = $data;
+            }
+         }
+      }
+      
+      // Calculate strength of password on a scale 0 (weak) - 4 (strongest)
+      // array strength();
+      public function strength($pwd = '', $data = array()) {
+         if($pwd=='') {
+            $pwd = $this->password;
+         }
+         $this->setUserdata($data);
+         if((isset($pwd)) && ($pwd!='') && ($pwd!=null)) {
+            if(class_exists('\ZxcvbnPhp\Zxcvbn')) {
+               $zxcvbn = new \ZxcvbnPhp\Zxcvbn(); // https://github.com/bjeavons/zxcvbn-php
+               $strength = $zxcvbn->passwordStrength($pwd, $this->userdata);
+
+               return $strength;
+            }
+         }
+         return false;
       }
    }
 }
