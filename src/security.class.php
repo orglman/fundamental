@@ -5,7 +5,7 @@
  * @author  Tobias Jonson <git@orgelman.systems>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License (GNU GPL)
  */
-namespace orgelman\security {
+namespace orgelman\fundamental\security {
    class encrypt {
       use \orgelman\fundamental\traits\stringHTMLEntities;
       use \orgelman\fundamental\traits\stringConvert;
