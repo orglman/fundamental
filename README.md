@@ -21,7 +21,7 @@ A reposotory of fundamental features that are used in Orgelman's project.
 In the words of Abraham Lincoln:
 > Pardon my French
 
-My English and technical language in the code is NOT on point... Sorry for any confusion.
+My English and technical language in the code is **NOT** on point... Sorry for any confusion.
 
 ## Install
 OFS is available on [Packagist](https://packagist.org/packages/orglman/fundamental) (using semantic versioning), and installation via Composer is the recommended way to install OFS. Just add this line to your composer.json file:
