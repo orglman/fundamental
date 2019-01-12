@@ -400,6 +400,7 @@ namespace orgelman\fundamental\security {
       // mixed generate(string $password);
       public function generate($password) {
          $password = trim($password);
+         $orgpass = $password;
          $test = $this->test($password);
          
          // Pass if the password matches the criterias above or return the errors
@@ -416,7 +417,7 @@ namespace orgelman\fundamental\security {
             }
             
             // Encrypt the hashed string and return it
-            return $this->encrypt->encrypt($hash, substr(mb_strtolower($password),0,ceil(strlen($password)/2)))['encrypted'];
+            return $this->encrypt->encrypt($hash, substr(mb_strtolower($orgpass),0,ceil(strlen($orgpass)/2)))['encrypted'];
          } else {
             return $test;
          }
@@ -424,9 +425,12 @@ namespace orgelman\fundamental\security {
       
       // verify() validates the hashed password. 
       
-      // bool generate(string $password, string $hashedPassword);
+      // bool verify(string $password, string $hashedPassword);
       public function verify($password, $hashedPassword) {
-         $hashedPassword = $this->encrypt->decrypt($hashedPassword,substr(mb_strtolower($password),0,ceil(strlen($password)/2)))['decrypted'];
+         $password = trim($password);
+         $orgpass = $password;
+         $password = $this->convertToHTMLEntities($password);
+         $hashedPassword = $this->encrypt->decrypt($hashedPassword,substr(mb_strtolower($orgpass),0,ceil(strlen($orgpass)/2)))['decrypted'];
          return crypt($password, $hashedPassword) == $hashedPassword;
       }
       
