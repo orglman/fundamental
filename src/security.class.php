@@ -398,13 +398,13 @@ namespace orgelman\fundamental\security {
       }
       
       // mixed generate(string $password);
-      public function generate($password) {
+      public function generate($password, $validate = true) {
          $password = trim($password);
          $orgpass = $password;
          $test = $this->test($password);
          
          // Pass if the password matches the criterias above or return the errors
-         if($test === true) {
+         if(($test === true) || ($validate===false)) {
             // Save password for strenght test
             $this->password = $password;
             // Convert password to html entities to support more signs and symbols
