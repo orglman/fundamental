@@ -434,6 +434,67 @@ namespace orgelman\fundamental\security {
          return crypt($password, $hashedPassword) == $hashedPassword;
       }
       
+      // string random();
+      public function random($i=0) {
+         $password = '';
+         $len = 8;
+         if($this->password_lenghtMin!=null) {
+            $len = $this->password_lenghtMin;
+         }
+         if($this->password_lenghtMax!=null) {
+            $len = $this->password_lenghtMax;
+         }
+         if(($this->password_lenghtMin!=null) && ($this->password_lenghtMax!=null)) {
+            $len = ($this->password_lenghtMax-(($this->password_lenghtMax-$this->password_lenghtMin)/2));
+         }
+         
+         if($this->password_number!=null) {
+            $characters = '0123456789';
+            $charactersLength = strlen($characters);
+            for ($i = 0; $i < $this->password_number; $i++) {
+              $password .= $characters[rand(0, $charactersLength - 1)];
+            }
+         }
+         
+         if($this->password_letter!=null) {
+            $characters = 'abcdefghijklmnopqrstuvwxyz';
+            $charactersLength = strlen($characters);
+            for ($i = 0; $i < $this->password_letter; $i++) {
+              $password .= $characters[rand(0, $charactersLength - 1)];
+            }
+         }
+         
+         if($this->password_capital!=null) {
+            $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            $charactersLength = strlen($characters);
+            for ($i = 0; $i < $this->password_capital; $i++) {
+              $password .= $characters[rand(0, $charactersLength - 1)];
+            }
+         }
+         
+         if($this->password_symbol!=null) {
+            $characters = '!@%()-+={}[]<>?';
+            $charactersLength = strlen($characters);
+            for ($i = 0; $i < $this->password_symbol; $i++) {
+              $password .= $characters[rand(0, $charactersLength - 1)];
+            }
+         }
+         
+         if($len-strlen($password)<$len) {
+            $characters = 'abcdefghijklmnopqrstuvwxyz';
+            $charactersLength = strlen($characters);
+            $left = $len-strlen($password);
+            for ($i = 0; $i < $left; $i++) {
+              $password .= $characters[rand(0, $charactersLength - 1)];
+            }
+         }
+         if(($this->test($password)) || ($i==10)) {
+            return str_shuffle($password);
+         } else {
+            return $this->random($i++);
+         }
+         
+      }
       
       
       // Calculate strength of password
