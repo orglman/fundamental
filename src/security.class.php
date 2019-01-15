@@ -386,7 +386,7 @@ namespace orgelman\fundamental\security {
             }
          }
          
-         if(($this->password_strength!=null) && (($this->strength($password)!==false) && ($this->strength($password)['score']<=$this->password_strength))) {
+         if(($this->password_strength!=null) && (($this->strength($password)!==false) && ($this->strength($password)['score']<$this->password_strength))) {
             $error[] = "Password too weak! ".$this->strength($password)['score'].'/4 minimum '.$this->password_strength;
          }
 
