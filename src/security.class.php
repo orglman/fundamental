@@ -136,6 +136,10 @@ namespace orgelman\fundamental\security {
             }
          }
          $str = trim(stripslashes($str));
+         if($str=="") {
+            $return['decrypted'] = $str;
+            return $return;
+         }
          
          // If compress is active and if string start with the delimiter - decompress input
          if(($this->compress==true) && (($this->startsWith($str, $this->delimiter_gz)) && ($this->endsWith($str, $this->delimiter_gz)))) {
@@ -155,13 +159,13 @@ namespace orgelman\fundamental\security {
          if((!$this->startsWith($str, $this->delimiter_characters)) || (!$this->endsWith($str, $this->delimiter_characters))) {
             $return['decrypted'] = trim($str);
             $return['error'][]   = $str = '#'.__LINE__.': String not valid';
-            trigger_error($str, E_USER_NOTICE); 
+            
             return $return;
          } else if(($this->startsWith($str, $this->delimiter_characters)) && ($this->endsWith($str, $this->delimiter_characters))) {
             $str = trim(substr(substr($str,strlen($this->delimiter_characters)), 0, (0-strlen($this->delimiter_characters))));
          } else {
             $return['error'][] = $str = '#'.__LINE__.': String not valid';
-            trigger_error($str, E_USER_NOTICE); 
+            
             return $return;
          }
 
