@@ -250,7 +250,7 @@ namespace orgelman\fundamental\scripts {
          );
       }
 
-      public function botTrap($input,$subject="",$fa="",$style="",$nojs=false) {
+      public function botTrap($input,$title="",$subject="",$fa="",$style="",$nojs=false) {
          $u                = uniqid();
          $str              = '';
          if(($input!="") && (!$nojs)) {
@@ -287,7 +287,7 @@ namespace orgelman\fundamental\scripts {
                $str .= '               var linktextP = pre;'."\n";
                $str .= '               var linktextD = dom + "." + "'.$parts["top"].'";'."\n";
                $str .= '               $( ".'.$id.'"   ).html("<"+"a style=\'cursor:pointer; '.$style.'\' target=\'_blank\' class=\'mail\' mail=" + linktextP + " dom=" + linktextD + "><" + "/a>");'."\n";
-               $str .= '               $( ".'.$id.' a" ).each(function(){var t=$(this).attr("mail")+"&#64;"+$(this).attr("dom");$(this).html("<i class=\'fa fa-fw fa-'.$fa.'\'></i>&#32; "+t)});'."\n";
+               $str .= '               $( ".'.$id.' a" ).each(function(){var t=<?php if($title=="") {?>$(this).attr("mail")+"&#64;"+$(this).attr("dom")<?php } else { echo "'".$title."'"};$(this).html("<i class=\'fa fa-fw fa-'.$fa.'\'></i>&#32; "+t)});'."\n";
                $str .= '               $( ".'.$id.' a" ).click(function(e){e.preventDefault();var t="mail"+"to:"+$(this).attr("mail")+\'@\'+$(this).attr("dom")+"'.$subject.'";if($(this).attr("mail")){location.href=t}});'."\n";
                $str .= '            });'."\n";
                $str .= '         }'."\n";
