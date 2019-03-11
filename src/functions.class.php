@@ -559,9 +559,9 @@ namespace orgelman\fundamental\scripts {
 
            //////////// If contrast is more than 5, return black color
            if ($contrastRatio > 5) {
-               return '#000000';
+               return 'black';
            } else { //////////// if not, return white color.
-               return '#ffffff';
+               return 'white';
            }
       }
 
