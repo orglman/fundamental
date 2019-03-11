@@ -503,7 +503,7 @@ namespace orgelman\fundamental\scripts {
             $c = ($c < 0) ? 0 : dechex($c);
             $rgb .= (strlen($c) < 2) ? '0'.$c : $c;
          }
-         return '#'.$rgb;
+         return strtoupper('#'.$rgb);
       }
 
       // Adjust color
@@ -527,7 +527,7 @@ namespace orgelman\fundamental\scripts {
             $return .= str_pad(dechex($color), 2, '0', STR_PAD_LEFT); // Make two char hex code
          }
 
-         return $return;
+         return strtoupper($return);
       }
       public function getContrastColor($hexColor) {
            //////////// hexColor RGB
