@@ -43,7 +43,6 @@ namespace orgelman\fundamental\debug {
          global $OFS_LogAndErrorArray;
          global $OFS_SettingsArray;
          if($OFS_SettingsArray['state']) {
-            echo '<pre>';
             ob_start();
             
             $i=1;
@@ -51,7 +50,7 @@ namespace orgelman\fundamental\debug {
             foreach($OFS_LogAndErrorArray as $log) {
                $space = str_repeat(' ', strlen($log['Date'].'  '));
                echo $log['Date'].': '.round(($log['Time'] - $OFS_SettingsArray['start']), 5).' seconds after script start'.PHP_EOL;
-               echo $space.$log['Type'].': '.$log['String'].PHP_EOL;
+               echo $space.$log['Type'].': '.str_replace("\n","\n".$space.str_repeat(' ', strlen($log['Type'].'  ')),$log['String']).PHP_EOL;
                echo $space.'In file:   '.$log['File'].' ['.$log['Line'].']'.PHP_EOL;
                array_shift($log['Backtrace']);
                if(count($log['Backtrace'])>0) {
@@ -187,6 +186,11 @@ namespace orgelman\fundamental\debug {
          if($errLine == '') {
             $errLine = debug_backtrace()[0]['line'];
          }
+         
+         if(!is_string($errStr)) {
+            $errStr = print_r($errStr, true);
+         }
+         
          $m = microtime(true);
          $log = array('Date' => date("Y m d H:i:s e"), 'Time' => $m, 'Type' => $errseverity, 'String' => $errStr, 'File' => $errFile, 'Line' => $errLine, 'Backtrace' => debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
          $OFS_LogAndErrorArray[] = $log;
@@ -217,7 +221,7 @@ namespace orgelman\fundamental\debug {
             
             $out  = '<pre style="border-bottom:1px solid #eee;">';
             $out .= '<strong>'.$Date.'</strong> '.round(($m - $OFS_SettingsArray['start']), 5).' seconds after script start'.PHP_EOL;
-            $out .= str_repeat(' ', strlen($Date.' ')).'<span style="color:red;">'.$errseverity.':</span> '.$errStr.PHP_EOL;
+            $out .= str_repeat(' ', strlen($Date.' ')).'<span style="color:red;">'.$errseverity.':</span> '.str_replace("\n","\n".str_repeat(' ', strlen($Date.' '.$errseverity.'  ')), $errStr).PHP_EOL;
             $out .= str_repeat(' ', strlen($Date.' ')).'<span style="color:#3D9700;">In file: '.$errFile.' ['.$errLine.']</span>'.PHP_EOL;
             if(count($v)>1) {     
                $out .= str_repeat(' ', strlen($Date.' ')).'<strong>Backtrace: </strong>';
