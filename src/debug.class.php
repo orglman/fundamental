@@ -202,27 +202,28 @@ namespace orgelman\fundamental\debug {
          }
          
          error_log(ob_get_clean());
-         
-         if(($OFS_SettingsArray['level'] >= $errNo) || ($OFS_SettingsArray['level'] == -1)) {
-            $v = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-            $Date = date("Y m d H:i:s e");
-            
-            $out  = '<pre style="border-bottom:1px solid #eee;">';
-            $out .= '<strong>'.$Date.'</strong> '.round(($m - $OFS_SettingsArray['start']), 5).' seconds after script start'.PHP_EOL;
-            $out .= str_repeat(' ', strlen($Date.' ')).'<span style="color:red;">'.$errseverity.':</span> '.str_replace("\n","\n".str_repeat(' ', strlen($Date.' '.$errseverity.'  ')), $errStr).PHP_EOL;
-            $out .= str_repeat(' ', strlen($Date.' ')).'<span style="color:#3D9700;">In file: '.$errFile.' ['.$errLine.']</span>'.PHP_EOL;
-            if(count($v)>1) {     
-               $out .= str_repeat(' ', strlen($Date.' ')).'<strong>Backtrace: </strong>';
-               for ($i = 1; $i<count($v); $i++) {
-                  if($i!=1) {
-                     $out .= str_repeat(' ', strlen($Date.' Backtrace: '));
-                  }
-                  $out .= (isset($v[$i]["file"]) ? $v[$i]["file"] : "unknown")." [".(isset($v[$i]["line"]) ? $v[$i]["line"] : "unknown").']' . PHP_EOL;
-               }
-            }
-            $out.='</pre>';
+         if(php_sapi_name() !== 'cli') {
+            if(($OFS_SettingsArray['level'] >= $errNo) || ($OFS_SettingsArray['level'] == -1)) {
+               $v = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+               $Date = date("Y m d H:i:s e");
 
-            echo $out;
+               $out  = '<pre style="border-bottom:1px solid #eee;">';
+               $out .= '<strong>'.$Date.'</strong> '.round(($m - $OFS_SettingsArray['start']), 5).' seconds after script start'.PHP_EOL;
+               $out .= str_repeat(' ', strlen($Date.' ')).'<span style="color:red;">'.$errseverity.':</span> '.str_replace("\n","\n".str_repeat(' ', strlen($Date.' '.$errseverity.'  ')), $errStr).PHP_EOL;
+               $out .= str_repeat(' ', strlen($Date.' ')).'<span style="color:#3D9700;">In file: '.$errFile.' ['.$errLine.']</span>'.PHP_EOL;
+               if(count($v)>1) {     
+                  $out .= str_repeat(' ', strlen($Date.' ')).'<strong>Backtrace: </strong>';
+                  for ($i = 1; $i<count($v); $i++) {
+                     if($i!=1) {
+                        $out .= str_repeat(' ', strlen($Date.' Backtrace: '));
+                     }
+                     $out .= (isset($v[$i]["file"]) ? $v[$i]["file"] : "unknown")." [".(isset($v[$i]["line"]) ? $v[$i]["line"] : "unknown").']' . PHP_EOL;
+                  }
+               }
+               $out.='</pre>';
+
+               echo $out;
+            }
          }
       }
       
