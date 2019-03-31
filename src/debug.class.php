@@ -75,44 +75,32 @@ namespace orgelman\fundamental\debug {
             echo '# Variables'."\n\n";
             if((isset($_GET)) && (is_array($_GET)) && (!empty($_GET))) {
                echo '## $_GET'.PHP_EOL;
-               foreach($_GET as $key => $value) {
-                  echo '   $_GET'.'["'.$key.'"] = '.$value.PHP_EOL;
-               }
+               echo print_r($_GET, true);
                echo "\n\n".'--'."\n\n";
             }
             if((isset($_POST)) && (is_array($_POST)) && (!empty($_POST))) {
                echo '## $_POST'.PHP_EOL;
-               foreach($_POST as $key => $value) {
-                  echo '   $_POST["'.$key.'"] = '.$value.PHP_EOL;
-               }
+               echo print_r($_POST, true);
                echo "\n\n".'--'."\n\n";
             }
             if((isset($_SESSION)) && (is_array($_SESSION)) && (!empty($_SESSION))) {
                echo '## $_SESSION'.PHP_EOL;
-               foreach($_GET as $key => $value) {
-                  echo '   $_SESSION["'.$key.'"] = '.$value.PHP_EOL;
-               }
+               echo print_r($_SESSION, true);
                echo "\n\n".'--'."\n\n";
             }
             if((isset($_COOKIE)) && (is_array($_COOKIE)) && (!empty($_COOKIE))) {
                echo '## $_COOKIE'.PHP_EOL;
-               foreach($_COOKIE as $key => $value) {
-                  echo '   $_COOKIE["'.$key.'"] = '.$value.PHP_EOL;
-               }
+               echo print_r($_COOKIE, true);
                echo "\n\n".'--'."\n\n";
             }
             if((isset($_FILES)) && (is_array($_FILES)) && (!empty($_FILES))) {
                echo '## $_FILES'.PHP_EOL;
-               foreach($_FILES as $key => $value) {
-                  echo '   $_FILES["'.$key.'"] = '.$value.PHP_EOL;
-               }
+               echo print_r($_FILES, true);
                echo "\n\n".'--'."\n\n";
             }
             if((isset($_SERVER)) && (is_array($_SERVER)) && (!empty($_SERVER))) {
                echo '## $_SERVER'.PHP_EOL;
-               foreach($_SERVER as $key => $value) {
-                  echo '   $_SERVER["'.$key.'"] = '.$value.PHP_EOL;
-               }
+               echo print_r($_SERVER, true);
             }
             
             $logFile = fopen($OFS_SettingsArray['logPath']."log.log", "w") or die("Unable to open file!");
