@@ -196,7 +196,9 @@ namespace orgelman\fundamental\debug {
                if($j!=0) {
                   echo $space.str_repeat(' ', strlen('Backtrace  '));
                }
-               echo $backtrace['file'].' ['.$backtrace['line'].']'.PHP_EOL;
+               if((isset($backtrace['file'])) && (isset($backtrace['line']))) {
+                  echo $backtrace['file'].' ['.$backtrace['line'].']'.PHP_EOL;
+               }
                $j++;
             }
          }
