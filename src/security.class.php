@@ -124,13 +124,17 @@ namespace orgelman\fundamental\security {
       
       // array decrypt(string $str, string $key[, string $method = ''])
       public function decrypt($str, $key, $method = '') {
+         if(trim($str)=='') {
+            $return['decrypted'] = $str;
+            return $return;
+         }
          if(!is_string($str)) {
             // If input is array, check if its from the encrypt script if that works set new $str else trigger error
             if((is_array($str)) && (isset($str['encrypted']))) {
                $str = $str['encrypted'];
             } else {
                $return['decrypted'] = trim($str);
-               $return['error'][]   = $str = '#'.__LINE__.': String not valid';
+               $return['error'][]   = $str = '#'.__LINE__.': String not valid: "'.$str.'"';
                trigger_error($str, E_USER_NOTICE); 
                return $return;
             }
