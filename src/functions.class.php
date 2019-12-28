@@ -254,7 +254,7 @@ namespace orgelman\fundamental\scripts {
          $u                = uniqid();
          $str              = '';
          if(($input!="") && (!$nojs)) {
-            if (!filter_var($input, FILTER_VALIDATE_EMAIL) === false) {
+            if ((!filter_var($input, FILTER_VALIDATE_EMAIL) === false) || (strpos($input, '@') !== false)) {
                if($fa=="") {
                   $fa = "at";
                }
