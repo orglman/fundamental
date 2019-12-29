@@ -11,6 +11,7 @@ namespace orgelman\fundamental\scripts {
       use \orgelman\fundamental\traits\externalLoadResource;
       use \orgelman\fundamental\traits\stringRandom;
       use \orgelman\fundamental\traits\stringSearch;
+      use \orgelman\fundamental\traits\phones;
       
       protected $root = null;
       protected $subcat = null;
