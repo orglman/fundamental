@@ -9,7 +9,7 @@
 namespace orgelman\fundamental\traits {
   trait phones {
       function printPhone($input) {
-         $input = cleanPhone($input);
+         $input = $this->cleanPhone($input);
          $returns= array();
          $phones = explode(',', $input);
          foreach($phones as $key => $phone) {
