@@ -14,31 +14,31 @@ namespace orgelman\fundamental\traits {
          $phones = explode(',', $input);
          foreach($phones as $key => $phone) {
             if($phone!='') {
-               if((!startsWith($phone, '+')) && (startsWith($phone, '46'))) {
+               if((!$this->startsWith($phone, '+')) && ($this->startsWith($phone, '46'))) {
                   $phone = '+'.$phone;
                } 
-               if((startsWith($phone, '+467')) && (strlen($phone) == 12)) {
+               if(($this->startsWith($phone, '+467')) && (strlen($phone) == 12)) {
                   //+467XXXXXXXX
                   //+46 7XX-XX XX XX
                   $phone = array('number' => substr($phone, 0, 3) . ' ' . substr($phone, 3, 3) . '-' . substr($phone, 6, 2) . ' ' . substr($phone, 8, 2) . ' ' . substr($phone, 10, 2),
                                  'city'   => '',
                                  'region' => '');
 
-               } elseif((startsWith($phone, '+468')) && (strlen($phone) == 12)) {
+               } elseif(($this->startsWith($phone, '+468')) && (strlen($phone) == 12)) {
                   //+468XXXXXXXX
                   //+46 X-XXX XXX XX
                   $phone = array('number' => substr($phone, 0, 3) . ' ' . substr($phone, 3, 1) . '-' . substr($phone, 4, 3) . ' ' . substr($phone, 7, 3) . ' ' . substr($phone, 10, 2),
                                  'city'   => 'Stockholm',
                                  'region' => 'Stockholms län');
 
-               } elseif((startsWith($phone, '+468')) && (strlen($phone) == 11)) {
+               } elseif(($this->startsWith($phone, '+468')) && (strlen($phone) == 11)) {
                   //+468XXXXXXX
                   //+46 X-XXX XX XX
                   $phone = array('number' => substr($phone, 0, 3) . ' ' . substr($phone, 3, 1) . '-' . substr($phone, 4, 3) . ' ' . substr($phone, 7, 2) . ' ' . substr($phone, 9, 2),
                                  'city'   => 'Stockholm',
                                  'region' => 'Stockholms län');
 
-               } elseif((startsWith($phone, '+468')) && (strlen($phone) == 10)) {
+               } elseif(($this->startsWith($phone, '+468')) && (strlen($phone) == 10)) {
                   //+468XXXXXX
                   //+46 X-XX XX XX
                   $phone = array('number' => substr($phone, 0, 3) . ' ' . substr($phone, 3, 1) . '-' . substr($phone, 4, 2) . ' ' . substr($phone, 6, 2) . ' ' . substr($phone, 8, 10),
@@ -330,13 +330,13 @@ namespace orgelman\fundamental\traits {
          foreach($phones as $phone) {
             $phone = preg_replace('/[^0-9.]+/', '', $phone);
             if($phone!='') {
-               if(startsWith($phone, '00')) {
+               if($this->startsWith($phone, '00')) {
                   $phone = '+'.ltrim($phone, '0');
                } else {
-                  if(startsWith($phone, '0')) {
+                  if($this->startsWith($phone, '0')) {
                      $phone = ltrim($phone, '0');
                   }
-                  if(!startsWith($phone, '46')) {
+                  if(!$this->startsWith($phone, '46')) {
                      $phone = '+'.'46'.$phone;
                   }
                }
