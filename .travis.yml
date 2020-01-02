@@ -11,8 +11,3 @@ matrix:
   allow_failures:
     - php: hhvm
   fast_finish: true
-
-
-# Script, failures in this section will result in build status 'failed'
-script: 
-  - phpunit --configuration test/phpunit.xml
