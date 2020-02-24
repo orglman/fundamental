@@ -97,12 +97,10 @@ namespace orgelman\fundamental\mysqli {
             $DBh = "";
             $DBh = @mysqli_connect(OFS_SQL_HOST,OFS_SQL_USERNAME,OFS_SQL_PASSWORD,OFS_SQL_NAME) or die("SQL ERROR (".__LINE__."): Connection error: ".__LINE__);
             if (mysqli_connect_errno()) {
-               trigger_error('SQL ERROR ('.__LINE__.'): Connection error',E_USER_ERROR);
-               die("SQL ERROR (".__LINE__."): Connection error: ".__LINE__);
+               trigger_error('SQL Connection error',E_ERROR);
             }
             if($DBh=="") {
-               trigger_error('SQL ERROR ('.__LINE__.'): Connection error',E_USER_ERROR);
-               die("SQL ERROR (".__LINE__."): Connection error: ".__LINE__);
+               trigger_error('SQL Connection error',E_ERROR);
             }
          }
 
@@ -120,13 +118,11 @@ namespace orgelman\fundamental\mysqli {
       }
       private function verify($q,$allow,$caller) {
          $parser = new PHPSQLParser($q);
-         $this->result[$this->start]["queryp"] = $parser;
          $i = 0;
          foreach($parser->parsed as $par => $val) {
             if($i==0) {
                if(trim(strtolower($par)) != trim(strtolower($allow))) {
-                  trigger_error('SQL ERROR ('.__LINE__.'): String type not match',E_USER_ERROR);
-                  die("SQL ERROR (".__LINE__."): ".$q."<br>\nString type not match<hr>\nCalled: ". $caller["file"]." [".$caller["line"]."]");
+                  trigger_error('String type not match',E_ERROR);
                }
             }
             $i++;
@@ -134,29 +130,23 @@ namespace orgelman\fundamental\mysqli {
          unset($i);
 
          if(strtolower(substr(trim($q), 0, strlen("drop"))) === strtolower("drop")) {
-            trigger_error('SQL ERROR ('.__LINE__.'): Can not drop table',E_USER_ERROR);
-            die("SQL ERROR (".__LINE__."): ".$q."<br>\nCan not drop table<hr>\nCalled: ". $caller["file"]." [".$caller["line"]."]");
+            trigger_error('Can not drop table',E_ERROR);
          }
          if(strtolower(substr(trim($q), 0, strlen("trunkate"))) === strtolower("trunkate")) {
-            trigger_error('SQL ERROR ('.__LINE__.'): Can not trunkate table',E_USER_ERROR);
-            die("SQL ERROR (".__LINE__."): ".$q."<br>\nCan not trunkate table<hr>\nCalled: ". $caller["file"]." [".$caller["line"]."]");
+            trigger_error('Can not trunkate table',E_ERROR);
          }
          if(strtolower(substr(trim($q), 0, strlen("alter"))) === strtolower("alter")) {
-            trigger_error('SQL ERROR ('.__LINE__.'): Can not alter table',E_USER_ERROR);
-            die("SQL ERROR (".__LINE__."): ".$q."<br>\nCan not alter table<hr>\nCalled: ". $caller["file"]." [".$caller["line"]."]");
+            trigger_error('Can not alter table',E_ERROR);
          }
          if((strtolower(substr(trim($q), 0, strlen($allow))) === strtolower($allow)) && ((substr(trim($q), -1) === ';'))) {
             return $q;
          } else {
             if(strtolower(substr(trim($q), 0, strlen($allow))) !== strtolower($allow)) {
-               trigger_error('SQL ERROR ('.__LINE__.'): String type not match',E_USER_ERROR);
-               die("SQL ERROR (".__LINE__."): ".$q."<br>\nString type not match<hr>\nCalled: ". $caller["file"]." [".$caller["line"]."]");
+               trigger_error('SQL String type not match',E_ERROR);
             } elseif(substr(trim($q), -1) !== ';') {
-               trigger_error('SQL ERROR ('.__LINE__.'): String end not match',E_USER_ERROR);
-               die("SQL ERROR (".__LINE__."): ".$q."<br>\nString end not match<hr>\nCalled: ". $caller["file"]." [".$caller["line"]."]");
+               trigger_error('SQL String end not match',E_ERROR);
             } else {
-               trigger_error('SQL ERROR ('.__LINE__.'): Unknown Error',E_USER_ERROR);
-               die("SQL ERROR (".__LINE__."): ".$q."<br>\nUnknown Error<hr>\nCalled: ". $caller["file"]." [".$caller["line"]."]");
+               trigger_error('SQL Unknown Error',E_ERROR);
             }
             return false;
          }
@@ -196,7 +186,7 @@ namespace orgelman\fundamental\mysqli {
             $_REQUEST[$str] = $_POST[$str];
             $str = $this->insert($_POST[$str]);
          } else {
-            trigger_error("Variable '".$str."' not found<br>\n".$deb["file"]." [".$deb["line"]."]", E_USER_ERROR);
+            trigger_error("Variable '".$str."' not found", E_ERROR);
             return false;
          }
          return $str; 
@@ -206,16 +196,13 @@ namespace orgelman\fundamental\mysqli {
          $sel     = "Select";
          $prefix  = "[[DB]]";
          $caller = debug_backtrace()[0];
-         $this->start = count($this->result)+1;
-         $start = $this->start;
 
          if((is_array($q)) || (is_object($q))) {
             $query = "SELECT \n";
             $i=0;
             foreach($q as $v => $qu) {
                if(strpos($qu, $prefix) == false) {
-                  trigger_error('SQL ERROR ('.__LINE__.'): Missing '.$prefix,E_USER_ERROR);
-                  die("SQL ERROR (".__LINE__."): Missing ".$prefix." Called: ". $caller["file"]." [".$caller["line"]."]");
+                  trigger_error('SQL Missing prefix '.$prefix,E_ERROR);
                }
                if($qu!="") {
                   $strpos = strpos($qu,$prefix);
@@ -235,8 +222,7 @@ namespace orgelman\fundamental\mysqli {
             $q = $query.";";
          } else {
             if(strpos($q, $prefix) == false) {
-               trigger_error('SQL ERROR ('.__LINE__.'): Missing '.$prefix,E_USER_ERROR);
-               die("SQL ERROR (".__LINE__."): Missing ".$prefix." Called: ". $caller["file"]." [".$caller["line"]."]");
+               trigger_error('SQL Missing prefix '.$prefix,E_ERROR);
             }
             if($q!="") {
                $strpos = strpos($q,$prefix);
@@ -255,42 +241,26 @@ namespace orgelman\fundamental\mysqli {
                $this->DBh = $this->StartDBConnection();
             }
             $MySQLi[0]["Result"] = $this->DBh->query($q);
-            $this->result[$start]["query"] = $q;
 
             if(strtolower(substr($q, 0, strlen($sel))) === strtolower($sel)) {
                if(!$MySQLi[0]["Result"]) {
-                  trigger_error('SQL ERROR ('.__LINE__.'): SQL ERROR '.$this->DBh->error."<br>\n".$caller["file"]." [".$caller["line"]."]",E_USER_ERROR);
-                  die("SQL ERROR (".__LINE__."): ".$q."<br>\nSQL ERROR (".__LINE__."): ".$this->DBh->error."<br>\n".$caller["file"]." [".$caller["line"]."]");
+                  trigger_error($this->DBh->error,E_ERROR);
                } elseif($MySQLi[0]["Result"]->num_rows>0) {
                   while($MySQLi[0]["Rows"]=$MySQLi[0]["Result"]->fetch_object()){
                      $arr[] = $MySQLi[0]["Rows"];
                   }
-                  $this->result[$start]["status"] = 1;
-                  $this->result[$start]["count"] = $MySQLi[0]["Result"]->num_rows;
-                  $this->result[$start]["rows"] = $arr;
                   return $arr;
                } elseif($MySQLi[0]["Result"]->num_rows==0) {
-                  $this->result[$start]["status"] = 1;
-                  $this->result[$start]["count"] = $MySQLi[0]["Result"]->num_rows;
-                  $this->result[$start]["rows"] = array();
                   return array();
                }
             } else {
                if(!$MySQLi[0]["Result"]) {
-                  trigger_error('SQL ERROR ('.__LINE__.'): SQL ERROR '.$this->DBh->error."<br>\n".$caller["file"]." [".$caller["line"]."]",E_USER_ERROR);
-                  die("SQL ERROR (".__LINE__."): ".$q."<br>\nSQL ERROR (".__LINE__."): ".$this->DBh->error."<br>\n".$caller["file"]." [".$caller["line"]."]");
-                  $this->result[$start]["status"] = 0;
-                  $this->result[$start]["rows"] = array();
+                  trigger_error($this->DBh->error,E_ERROR);
                   return array();
                }
-               $this->result[$start]["status"] = 1;
-               $this->result[$start]["count"] = mysqli_affected_rows($this->DBh);
-               $this->result[$start]["rows"] = array();
                return array();
             }
          }
-         $this->result[$start]["status"] = 0;
-         $this->result[$start]["rows"] = array();
          return array();
       }
       public function SQLBackup($tables = '*', $path = '', $title = '') {
