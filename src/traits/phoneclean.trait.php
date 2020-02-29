@@ -322,7 +322,7 @@ namespace orgelman\fundamental\traits {
          }
          return json_encode($returns);
       }
-      function cleanPhone($input) {
+      function cleanPhone($input, $plus = true) {
          $returns= array();
          $input = str_replace(';',',',$input);
          $phones = explode(',', $input);
@@ -340,7 +340,13 @@ namespace orgelman\fundamental\traits {
                      $phone = '+'.'46'.$phone;
                   }
                }
-               $returns[] = $phone;
+             
+               if($plus == false) {
+                  $phone = preg_replace('/[^0-9.]/', '', $phone);
+               }
+               if(strlen($phone) > 6) {
+                  $returns[] = $phone;
+               }
             }
          }
 
