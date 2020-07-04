@@ -281,7 +281,6 @@ namespace orgelman\fundamental\scripts {
                $str .= '            setTimeout("initJQuery'.$u.'()", 50);'."\n";
                $str .= '         } else {'."\n";
                $str .= '            $(function() {'."\n";
-               $str .= '               console.log("Emaillink");'."\n";
                $str .= '               var pre = "'.$parts["prefix"].'";'."\n";
                $str .= '               var dom = "'.$parts["domain"].'";'."\n";
                $str .= '               var linktext = pre + "&#64;" + dom + "." + "'.$parts["top"].'";'."\n";
@@ -318,7 +317,6 @@ namespace orgelman\fundamental\scripts {
                $str .= '            setTimeout("initJQuery'.$u.'()", 50);'."\n";
                $str .= '         } else {'."\n";
                $str .= '            $(function() {'."\n";
-               $str .= '               console.log("Phonelink");'."\n";
                $str .= '               var phone = "'.$phone.'";'."\n";
                $str .= '               $( ".'.$id.'"   ).html("<"+"a style=\'cursor:pointer; '.$style.'\' target=\'_blank\' class=\'phone\' phone=" + phone + "><" + "/a>");'."\n";
                $str .= '               $( ".'.$id.' a" ).each(function(){var t=phone;$(this).html("<i class=\'fa fa-fw fa-'.$fa.'\'></i>&#32; " + t)});'."\n";
