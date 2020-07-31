@@ -303,33 +303,35 @@ namespace orgelman\fundamental\scripts {
                   $fa = "phone";
                }
                $id               = $this->toAscii("p_".rand(0,9999999)."_".uniqid()); 
-               $phone            = str_replace(array(" ","-"),array("",""),addslashes(strtolower($input)));
-               $str .= '<span class="spamfreephone">'."\n"; 
-               $str .= '   <span class="'.$id.'">'.$phone.'</span>'."\n";
-               $str .= '   <script>'."\n";
-               $str .= '      var jQueryScriptOutputted'.$u.' = false;'."\n";
-               $str .= '      function initJQuery'.$u.'() {'."\n";
-               $str .= '         if (typeof(jQuery) == "undefined") {'."\n";
-               $str .= '            if (! jQueryScriptOutputted'.$u.') {'."\n";
-               $str .= '               jQueryScriptOutputted'.$u.' = true;'."\n";
-               $str .= '               document.write("<scr" + "ipt type=\'text/javascript\' src=\'//cdn.orgelman.systems/jQuery/latest.min.js\'></scr" + "ipt>");'."\n";
-               $str .= '            }'."\n";
-               $str .= '            setTimeout("initJQuery'.$u.'()", 50);'."\n";
-               $str .= '         } else {'."\n";
-               $str .= '            $(function() {'."\n";
-               $str .= '               var phone = "'.$phone.'";'."\n";
-               $str .= '               $( ".'.$id.'"   ).html("<"+"a style=\'cursor:pointer; '.$style.'\' target=\'_blank\' class=\'phone\' phone=" + phone + "><" + "/a>");'."\n";
-               $str .= '               $( ".'.$id.' a" ).each(function(){var t=phone;$(this).html("<i class=\'fa fa-fw fa-'.$fa.'\'></i>&#32; " + t)});'."\n";
-               $str .= '               $( ".'.$id.' a" ).click(function(e){e.preventDefault();var t="tel:"+$(this).attr("phone");if($(this).attr("phone")){location.href=t}});'."\n";
-               $str .= '            });'."\n";
-               $str .= '         }'."\n";
-               $str .= '      }'."\n";
-               $str .= '      initJQuery'.$u.'();'."\n";
-               $str .= '   </script>'."\n";   
-               $str .= '   <noscript>'."\n";
-               $str .= '      <a href="http://enable-javascript.com/">Javascript</a>'."\n";
-               $str .= '   </noscript>'."\n";
-               $str .= '</span>'."\n";
+               $phones           = json_decode($this->printPhone($input));
+               foreach($phones as $phone) {
+                  $str .= '<span class="spamfreephone">'."\n"; 
+                  $str .= '   <span class="'.$id.'">'.$phone->number.'</span>'."\n";
+                  $str .= '   <script>'."\n";
+                  $str .= '      var jQueryScriptOutputted'.$u.' = false;'."\n";
+                  $str .= '      function initJQuery'.$u.'() {'."\n";
+                  $str .= '         if (typeof(jQuery) == "undefined") {'."\n";
+                  $str .= '            if (! jQueryScriptOutputted'.$u.') {'."\n";
+                  $str .= '               jQueryScriptOutputted'.$u.' = true;'."\n";
+                  $str .= '               document.write("<scr" + "ipt type=\'text/javascript\' src=\'//cdn.orgelman.systems/jQuery/latest.min.js\'></scr" + "ipt>");'."\n";
+                  $str .= '            }'."\n";
+                  $str .= '            setTimeout("initJQuery'.$u.'()", 50);'."\n";
+                  $str .= '         } else {'."\n";
+                  $str .= '            $(function() {'."\n";
+                  $str .= '               var phone = "'.$phone->plain.'";'."\n";
+                  $str .= '               $( ".'.$id.'"   ).html("<"+"a style=\'cursor:pointer; '.$style.'\' target=\'_blank\' class=\'phone\' phone=" + phone + "><" + "/a>");'."\n";
+                  $str .= '               $( ".'.$id.' a" ).each(function(){var t=phone;$(this).html("<i class=\'fa fa-fw fa-'.$fa.'\'></i>&#32; " + "'.$phone->number.'")});'."\n";
+                  $str .= '               $( ".'.$id.' a" ).click(function(e){e.preventDefault();var t="tel:"+$(this).attr("phone");if($(this).attr("phone")){location.href=t}});'."\n";
+                  $str .= '            });'."\n";
+                  $str .= '         }'."\n";
+                  $str .= '      }'."\n";
+                  $str .= '      initJQuery'.$u.'();'."\n";
+                  $str .= '   </script>'."\n";   
+                  $str .= '   <noscript>'."\n";
+                  $str .= '      <a href="http://enable-javascript.com/">Javascript</a>'."\n";
+                  $str .= '   </noscript>'."\n";
+                  $str .= '</span>'."\n";
+               }
             } else {
                $str = $input;
             }
