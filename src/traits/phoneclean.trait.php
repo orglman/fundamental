@@ -17,6 +17,7 @@ namespace orgelman\fundamental\traits {
                if((!$this->startsWith($phone, '+')) && ($this->startsWith($phone, '46'))) {
                   $phone = '+'.$phone;
                } 
+               $plain = str_replace('+', '00', $phone);
                if(($this->startsWith($phone, '+467')) && (strlen($phone) == 12)) {
                   //+467XXXXXXXX
                   //+46 7XX-XX XX XX
@@ -48,6 +49,8 @@ namespace orgelman\fundamental\traits {
                } else {
                   $phone = array('number' => $phone,'city'   => '','region' => '');
                } 
+               
+               $phone['plain'] = $plain;
 
                /* Lista över riktnummer i Sverige
                08	Stockholm	Stockholms län
