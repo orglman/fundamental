@@ -327,28 +327,32 @@ namespace orgelman\fundamental\traits {
       }
       function cleanPhone($input, $plus = true) {
          $returns= array();
-         $input = str_replace(';',',',$input);
-         $phones = explode(',', $input);
+         if(is_string($input)) {
+            $input = str_replace(';',',',$input);
+            $phones = explode(',', $input);
+         }
 
-         foreach($phones as $phone) {
-            $phone = preg_replace('/[^0-9.]+/', '', $phone);
-            if($phone!='') {
-               if($this->startsWith($phone, '00')) {
-                  $phone = '+'.ltrim($phone, '0');
-               } else {
-                  if($this->startsWith($phone, '0')) {
-                     $phone = ltrim($phone, '0');
+         if((is_array($input)) || (is_object($input))) {
+            foreach($phones as $phone) {
+               $phone = preg_replace('/[^0-9.]+/', '', $phone);
+               if($phone!='') {
+                  if($this->startsWith($phone, '00')) {
+                     $phone = '+'.ltrim($phone, '0');
+                  } else {
+                     if($this->startsWith($phone, '0')) {
+                        $phone = ltrim($phone, '0');
+                     }
+                     if(!$this->startsWith($phone, '46')) {
+                        $phone = '+'.'46'.$phone;
+                     }
                   }
-                  if(!$this->startsWith($phone, '46')) {
-                     $phone = '+'.'46'.$phone;
+
+                  if($plus == false) {
+                     $phone = preg_replace('/[^0-9.]/', '', $phone);
                   }
-               }
-             
-               if($plus == false) {
-                  $phone = preg_replace('/[^0-9.]/', '', $phone);
-               }
-               if(strlen($phone) > 6) {
-                  $returns[] = $phone;
+                  if(strlen($phone) > 6) {
+                     $returns[] = $phone;
+                  }
                }
             }
          }
