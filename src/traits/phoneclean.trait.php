@@ -330,9 +330,11 @@ namespace orgelman\fundamental\traits {
          if(is_string($input)) {
             $input = str_replace(';',',',$input);
             $phones = explode(',', $input);
+         } else if((is_array($input)) || (is_object($input))) {
+            $phones = $input;
          }
 
-         if((is_array($input)) || (is_object($input))) {
+         if((isset($phones)) && ((is_array($phones)) || (is_object($phones)))) {
             foreach($phones as $phone) {
                $phone = preg_replace('/[^0-9.]+/', '', $phone);
                if($phone!='') {
