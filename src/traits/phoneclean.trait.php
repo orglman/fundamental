@@ -326,6 +326,7 @@ namespace orgelman\fundamental\traits {
          return json_encode($returns);
       }
       function cleanPhone($input, $plus = true) {
+         
          $returns= array();
          if(is_string($input)) {
             $input = str_replace(';',',',$input);
@@ -336,10 +337,14 @@ namespace orgelman\fundamental\traits {
 
          if((isset($phones)) && ((is_array($phones)) || (is_object($phones)))) {
             foreach($phones as $phone) {
+               $phone = str_replace('+', '00', $phone);
                $phone = preg_replace('/[^0-9.]+/', '', $phone);
                if($phone!='') {
                   if($this->startsWith($phone, '00')) {
                      $phone = '+'.ltrim($phone, '0');
+                  } else if($this->startsWith($phone, '+')) { 
+                     $phone = str_replace('+', '00', $phone);
+                     
                   } else {
                      if($this->startsWith($phone, '0')) {
                         $phone = ltrim($phone, '0');
