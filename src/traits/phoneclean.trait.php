@@ -18,33 +18,38 @@ namespace orgelman\fundamental\traits {
                   $phone = '+'.$phone;
                } 
                $plain = str_replace('+', '00', $phone);
+               
                if(($this->startsWith($phone, '+467')) && (strlen($phone) == 12)) {
                   //+467XXXXXXXX
                   //+46 7XX-XX XX XX
                   $phone = array('number' => substr($phone, 0, 3) . ' ' . substr($phone, 3, 3) . '-' . substr($phone, 6, 2) . ' ' . substr($phone, 8, 2) . ' ' . substr($phone, 10, 2),
                                  'city'   => '',
-                                 'region' => '');
+                                 'region' => '',
+                                 'country' => 'Sweden');
 
                } elseif(($this->startsWith($phone, '+468')) && (strlen($phone) == 12)) {
                   //+468XXXXXXXX
                   //+46 X-XXX XXX XX
                   $phone = array('number' => substr($phone, 0, 3) . ' ' . substr($phone, 3, 1) . '-' . substr($phone, 4, 3) . ' ' . substr($phone, 7, 3) . ' ' . substr($phone, 10, 2),
                                  'city'   => 'Stockholm',
-                                 'region' => 'Stockholms län');
+                                 'region' => 'Stockholms län',
+                                 'country' => 'Sweden');
 
                } elseif(($this->startsWith($phone, '+468')) && (strlen($phone) == 11)) {
                   //+468XXXXXXX
                   //+46 X-XXX XX XX
                   $phone = array('number' => substr($phone, 0, 3) . ' ' . substr($phone, 3, 1) . '-' . substr($phone, 4, 3) . ' ' . substr($phone, 7, 2) . ' ' . substr($phone, 9, 2),
                                  'city'   => 'Stockholm',
-                                 'region' => 'Stockholms län');
+                                 'region' => 'Stockholms län',
+                                 'country' => 'Sweden');
 
                } elseif(($this->startsWith($phone, '+468')) && (strlen($phone) == 10)) {
                   //+468XXXXXX
                   //+46 X-XX XX XX
                   $phone = array('number' => substr($phone, 0, 3) . ' ' . substr($phone, 3, 1) . '-' . substr($phone, 4, 2) . ' ' . substr($phone, 6, 2) . ' ' . substr($phone, 8, 10),
                                  'city'   => 'Stockholm',
-                                 'region' => 'Stockholms län');
+                                 'region' => 'Stockholms län',
+                                 'country' => 'Sweden');
 
                } else {
                   $phone = array('number' => $phone,'city'   => '','region' => '');
