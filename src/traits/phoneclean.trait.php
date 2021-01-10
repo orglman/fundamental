@@ -345,24 +345,27 @@ namespace orgelman\fundamental\traits {
                $phone = str_replace('+', '00', $phone);
                $phone = preg_replace('/[^0-9.]+/', '', $phone);
                if($phone!='') {
-                  if($this->startsWith($phone, '00')) {
-                     $phone = '+'.ltrim($phone, '0');
-                  } else if($this->startsWith($phone, '+')) { 
-                     $phone = str_replace('+', '00', $phone);
-                     
-                  } else {
-                     if($this->startsWith($phone, '0')) {
-                        $phone = ltrim($phone, '0');
-                     }
-                     if(!$this->startsWith($phone, '46')) {
-                        $phone = '+'.'46'.$phone;
-                     }
-                  }
+                  if($this->startsWith($phone, '0')) {
+                     if($this->startsWith($phone, '00')) {
+                        $phone = '+'.ltrim($phone, '0');
+                     } else if($this->startsWith($phone, '+')) { 
+                        $phone = str_replace('+', '00', $phone);
 
-                  if($plus == false) {
-                     $phone = preg_replace('/[^0-9.]/', '', $phone);
+                     } else {
+                        if($this->startsWith($phone, '0')) {
+                           $phone = ltrim($phone, '0');
+                        }
+                        if(!$this->startsWith($phone, '46')) {
+                           $phone = '+'.'46'.$phone;
+                        }
+                     }
+
+                     if($plus == false) {
+                        $phone = str_replace('+', '00', $phone);
+                        $phone = preg_replace('/[^0-9.]/', '', $phone);
+                     }
                   }
-                  if(strlen($phone) > 6) {
+                  if(strlen($phone) > 2) {
                      $returns[] = $phone;
                   }
                }
