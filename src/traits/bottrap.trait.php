@@ -8,7 +8,19 @@
  
 namespace orgelman\fundamental\traits {
    trait bottrap {
-      public function botTrap($input, $btn=false, $copy=false, $copytext = '', $title="", $subject="", $fa="", $style="", $nojs=false) {
+      private $bottrap_phoneFormat             = true;
+      private $bottrap_phoneOnlineFormat             = true;
+      
+      public function botTrapFormatNumber($bool) {
+         if(is_bool($bool)) {
+            $this->bottrap_format = $bool;
+         }
+         return $this->bottrap_format;
+      }
+      
+      // COPY FROM THIS LINE FOR BOTTRAP
+      
+      function botTrap($input, $btn=false, $copy=false, $copytext = '', $title="", $subject="", $fa="", $style="", $onlinecheckandformat = true, $nojs=false) {
          $input            = trim($input);
          $id               = rand(1000000,9999999)."".uniqid(); 
          $str              = '';
@@ -29,15 +41,19 @@ namespace orgelman\fundamental\traits {
                   $class .= ' btn-email';
                }
             } else {
-               $type = 'p';
-               if($fa=="") {
-                  $fa = "phone";
-               }
-               
-               if($btn == true) {
-                  $class .= ' btn-phone';
+               $input = preg_replace('/[^0-9,;+.]/', '', $input);
+               if(($input!='') && (strlen(preg_replace('/[^0-9.]/', '', $input)) > 2)) {
+                  $type = 'p';
+                  if($fa=="") {
+                     $fa = "phone";
+                  }
+
+                  if($btn == true) {
+                     $class .= ' btn-phone';
+                  }
                }
             }
+            
 
             if($subject!="") {
                $subject = "?subject=".addslashes(urlencode($subject));
@@ -49,11 +65,15 @@ namespace orgelman\fundamental\traits {
                $parts["domain"]  = substr(substr(strrchr($email, '@'), 1), 0 , (strrpos(substr(strrchr($email, '@'), 1), ".")));
                $parts["top"]     = substr(strrchr($email, '.'), 1);
 
-               $text = $parts["prefix"]." [ at ] ".$parts["domain"]." [ dot ] ".$parts["top"];
+               $text = $parts["prefix"];
             }
             if($type == 'p') {
-               if((isset($this)) && (method_exists($this,'printPhone'))) {
+               if((isset($this)) && (method_exists($this,'printPhone')) && ($this->bottrap_phoneFormat)) {
                   $phones  = json_decode($this->printPhone($input));
+                  $phone   = $phones['0']->plain;
+                  $text    = $phones['0']->number;
+               } else if(((isset($this)) && ($this->bottrap_phoneFormat) && ($this->$bottrap_phoneOnlineFormat)) || ($onlinecheckandformat)) {
+                  $phones  = json_decode(file_get_contents('https://assets.arcwind.se/phones.print.php?input='.urlencode($input)));
                   $phone   = $phones['0']->plain;
                   $text    = $phones['0']->number;
                } else {
@@ -107,41 +127,23 @@ namespace orgelman\fundamental\traits {
                         });
 <?php } ?>  
                         
+                        
                         $(".<?php echo $id; ?> a").on("contextmenu", function(e) {
                            e.preventDefault();
+                           <?php if($type == 'e') { ?>var t1 = $(this).attr("mail")+'@'+$(this).attr("dom");<?php } if($type == 'p') { ?>var t1 = $(this).attr("phone");<?php } ?>
+                           copyTextToClipboard<?php echo $id; ?>(t1, '<?php echo $copytext; ?>')
                         });
                         $(".<?php echo $id; ?> a").on("mousedown", function(e) {
                            e.preventDefault();
-<?php if($copy != false) { ?>
-                           <?php if($type == 'e') { ?>
-                              var t = $(this).attr("mail")+'@'+$(this).attr("dom");
-<?php } ?>
-<?php if($type == 'p') { ?>
-                              var t = $(this).attr("phone");
-<?php } ?>
-                              copyTextToClipboard<?php echo $id; ?>(t, '<?php echo $copytext; ?>')
-<?php } else { ?>
-                           switch (e.which) {
-                              case 3:
-<?php if($type == 'e') { ?>
-                                 var t = $(this).attr("mail")+'@'+$(this).attr("dom");
-<?php } ?>
-<?php if($type == 'p') { ?>
-                                 var t = $(this).attr("phone");
-<?php } ?>
-                                 copyTextToClipboard<?php echo $id; ?>(t, '<?php echo $copytext; ?>')
-                                 break;
-                              default:
-<?php if($type == 'e') { ?>
-                                 var t="mail"+"to:"+$(this).attr("mail")+'@'+$(this).attr("dom")+"<?php echo $subject; ?>";
-<?php } ?>
-<?php if($type == 'p') { ?>
-                                 var t="te"+"l:"+$(this).attr("plain");
-<?php } ?>
-                                 location.href=t
-                                 break;
-                            }
-<?php } ?>
+                           <?php if($type == 'e') { ?>var t1 = $(this).attr("mail")+'@'+$(this).attr("dom");<?php } if($type == 'p') { ?>var t1 = $(this).attr("phone");<?php } ?>
+                           <?php if($type == 'e') { ?>var t2 = "mail"+"to:"+$(this).attr("mail")+'@'+$(this).attr("dom")+"<?php echo $subject; ?>";<?php } if($type == 'p') { ?>var t2 = "te"+"l:"+$(this).attr("phone");<?php } ?>
+                           
+                           if((e.which == 3) || ('<?php echo $copy; ?>' == true)) {
+                              $(".<?php echo $id; ?> a").data('copy', t1);
+                              copyTextToClipboard<?php echo $id; ?>(t1, '<?php echo $copytext; ?>')
+                           } else {
+                              location.href = t2
+                           }
                         });
                      }
                      
@@ -149,27 +151,31 @@ namespace orgelman\fundamental\traits {
                }
             }
             function copyTextToClipboard<?php echo $id; ?>(text, header) {
-               const el = document.createElement('textarea');
-               el.value = text;
-               el.setAttribute('readonly', '');
-               el.style.position = 'absolute';
-               el.style.left = '-9999px';
-               document.body.appendChild(el);
-               el.select();
-               document.execCommand('copy');
-               document.body.removeChild(el);
-               
-               if(header == '') {
-                  header = 'Copied to clipboard';
-               }
-               
-               if(typeof($.gritter) == "undefined") {
-                  $('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', 'https://assets.arcwind.se/scripts/Gritter/css/jquery.gritter.css') );
-                  $.getScript('https://assets.arcwind.se/scripts/Gritter/js/jquery.gritter.js', function( data, textStatus, jqxhr ) {
+               if($('body').data('copied') != text) {
+                  const el = document.createElement('textarea');
+                  el.value = text;
+                  el.setAttribute('readonly', '');
+                  el.style.position = 'absolute';
+                  el.style.left = '-9999px';
+                  document.body.appendChild(el);
+                  el.select();
+                  document.execCommand('copy');
+                  document.body.removeChild(el);
+
+                  if(header == '') {
+                     header = 'Copied to clipboard';
+                  }
+
+                  $('body').data('copied', text);
+
+                  if(typeof($.gritter) == "undefined") {
+                     $('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', 'https://assets.arcwind.se/scripts/Gritter/css/jquery.gritter.css') );
+                     $.getScript('https://assets.arcwind.se/scripts/Gritter/js/jquery.gritter.js', function( data, textStatus, jqxhr ) {
+                        $.gritter.add({title: '&#10004; ' + header,text: text,sticky: false,time: '5000'});
+                     });
+                  } else {
                      $.gritter.add({title: '&#10004; ' + header,text: text,sticky: false,time: '5000'});
-                  });
-               } else {
-                  $.gritter.add({title: '&#10004; ' + header,text: text,sticky: false,time: '5000'});
+                  }
                }
             }
             initJQuery<?php echo $id; ?>();
@@ -188,8 +194,13 @@ namespace orgelman\fundamental\traits {
             $str = $input;
          }
          
+         if($str == '') {
+            return false;
+         }
          return $str;
       }
 
+      // COPY TO THIS LINE FOR BOTTRAP
+      
    }
 }
