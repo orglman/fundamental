@@ -20,7 +20,7 @@ namespace orgelman\fundamental\traits {
       
       // COPY FROM THIS LINE FOR BOTTRAP
       
-      function botTrap($input, $btn=false, $copy=false, $copytext = '', $title="", $subject="", $fa="", $style="", $onlinecheckandformat = true, $nojs=false) {
+      function botTrap($input, $btn=false, $copy=false, $copytext = 'Kopierat till urklpp', $title="", $subject="", $fa="", $style="", $onlinecheckandformat = true, $nojs=false) {
          $input            = trim($input);
          $id               = rand(1000000,9999999)."".uniqid(); 
          $str              = '';
@@ -136,13 +136,12 @@ namespace orgelman\fundamental\traits {
                         $(".<?php echo $id; ?> a").on("mousedown", function(e) {
                            e.preventDefault();
                            <?php if($type == 'e') { ?>var t1 = $(this).attr("mail")+'@'+$(this).attr("dom");<?php } if($type == 'p') { ?>var t1 = $(this).attr("phone");<?php } ?>
-                           <?php if($type == 'e') { ?>var t2 = "mail"+"to:"+$(this).attr("mail")+'@'+$(this).attr("dom")+"<?php echo $subject; ?>";<?php } if($type == 'p') { ?>var t2 = "te"+"l:"+$(this).attr("phone");<?php } ?>
+                           <?php if($type == 'e') { ?>var t2 = "mail"+"to:"+$(this).attr("mail")+'@'+$(this).attr("dom")+"<?php echo $subject; ?>";<?php } if($type == 'p') { ?>var t2 = "te"+"l:"+$(this).attr("plain");<?php } ?>
                            
                            if((e.which == 3) || ('<?php echo $copy; ?>' == true)) {
-                              $(".<?php echo $id; ?> a").data('copy', t1);
                               copyTextToClipboard<?php echo $id; ?>(t1, '<?php echo $copytext; ?>')
                            } else {
-                              location.href = t2
+                              location.href = t2;
                            }
                         });
                      }
