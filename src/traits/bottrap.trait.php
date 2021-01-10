@@ -20,7 +20,7 @@ namespace orgelman\fundamental\traits {
       
       // COPY FROM THIS LINE FOR BOTTRAP
       
-      function botTrap($input, $btn=false, $copy=false, $copytext = 'Kopierat till urklpp', $title="", $subject="", $fa="", $style="", $onlinecheckandformat = true, $nojs=false) {
+      function botTrap($input, $btn=false, $copy=false, $copytext = '', $title="", $subject="", $fa="", $style="", $onlinecheckandformat = true, $nojs=false) {
          $input            = trim($input);
          $id               = rand(1000000,9999999)."".uniqid(); 
          $str              = '';
