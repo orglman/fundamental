@@ -286,27 +286,6 @@ namespace orgelman\fundamental\mysqli {
             }
          } 
 
-         $creates = array();
-         $result = $this->DBh->query('SHOW TABLES');
-         while($row = mysqli_fetch_row($result)) {
-            $creates[] = $row[0];
-         }
-
-         foreach($creates as $table) {
-            if(!in_array($table, $tables)) { 
-               $return.= '-- phpMyAdmin SQL Dump'."\n";
-               $return.= '-- Generation Time '.date("Y-m-d H:i:s e")."\n"."\n";
-               $return.= '-- --------------------------------------------------------'."\n";
-               $return.= '-- Table structure for table '.$table."\n";
-
-               $row2 = preg_replace('/CREATE TABLE/', 'CREATE TABLE IF NOT EXISTS', mysqli_fetch_row($this->DBh->query('SHOW CREATE TABLE '.$table)), 1);
-               $return.= "\n\n".$row2[1].";\n\n";
-            }
-         }
-         $return.= '-- --------------------------------------------------------'."\n";
-         $return.= '-- --------------------------------------------------------'."\n";
-         $return.= '-- --------------------------------------------------------'."\n";
-
          foreach($tables as $table) {
             $result = $this->DBh->query('SELECT * FROM '.$table);
             if(!is_bool($result)) {
