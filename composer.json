@@ -8,12 +8,10 @@
             "email"  : "git@orgelman.systems"
         }
     ],
-    "require": {
-        "greenlion/php-sql-parser" : "@dev",
-        "bjeavons/zxcvbn-php" : "^0.4"
-    },
     "suggest": {
-        "cbschuld/browser.php" : "dev-master"
+        "cbschuld/browser.php" : "dev-master",
+        "greenlion/php-sql-parser" : "@dev",
+        "bjeavons/zxcvbn-php" : "@dev"
     },
     "autoload": {
         "classmap"   : ["src/", "src/traits/"]
